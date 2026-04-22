@@ -33,6 +33,15 @@ Voor sneller begrip van de codebase staan in `docs/` ook deze referenties:
 
 ## Starten
 
+De standaard `docker-compose.yml` is nu ingericht voor een productie-achtige run:
+
+- de app bouwt eerst met `next build`
+- de app start met `npm run start`
+- de broncode wordt niet als volume ingemount
+- een lege Postgres-volume voert automatisch alle SQL-bestanden in `db/migrations/` uit
+
+Voor lokaal ontwikkelen kun je nog steeds handmatig `npm install` en `npm run dev` gebruiken buiten Docker.
+
 1. Maak `.env` op basis van `.env.example`
 2. Vul veilige waarden in voor:
    `POSTGRES_PASSWORD`, `ADMIN_ACCESS_CODE`, `ADMIN_SESSION_TOKEN`
@@ -44,19 +53,40 @@ Voor sneller begrip van de codebase staan in `docs/` ook deze referenties:
 docker compose up -d --build
 ```
 
-5. Installeer de database-structuur:
-
-```powershell
-docker compose exec db sh -lc 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /app/db/migrations/001_initial_schema.sql'
-docker compose exec db sh -lc 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /app/db/migrations/002_drivers.sql'
-docker compose exec db sh -lc 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /app/db/migrations/003_app_settings.sql'
-docker compose exec db sh -lc 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB" -f /app/db/migrations/004_remove_sim_name.sql'
-```
-
-6. Open:
+5. Open:
 
 - publiek scoreboard: `http://localhost:3000`
 - admin login: `http://localhost:3000/admin/login`
+
+## Eerste run op een andere pc of VPS
+
+Als de database nog leeg is, hoef je geen losse migratiecommando's te draaien.
+De Postgres-container voert de SQL-bestanden uit `db/migrations/` automatisch uit bij de eerste start van een nieuwe database-volume.
+
+Schone testflow:
+
+1. clone de repo
+2. maak `.env` op basis van `.env.example`
+3. zet veilige waarden in `.env`
+4. start met `docker compose up -d --build`
+
+Als je opnieuw helemaal schoon wilt testen met een lege database:
+
+```powershell
+docker compose down -v
+docker compose up -d --build
+```
+
+`docker compose down -v` verwijdert ook de Postgres-volume, dus alle data gaat dan weg.
+
+## Production notes
+
+Voor productie of een VPS:
+
+- zet `APP_URL` op je echte URL, bijvoorbeeld `https://jouwdomein.nl`
+- gebruik sterke, unieke waarden voor `POSTGRES_PASSWORD`, `ADMIN_ACCESS_CODE` en `ADMIN_SESSION_TOKEN`
+- publiceer alleen de poorten die je echt nodig hebt
+- gebruik bij voorkeur een reverse proxy met HTTPS voor publiek verkeer
 
 ## Admin en publiek gescheiden
 
