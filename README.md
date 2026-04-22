@@ -57,6 +57,9 @@ docker compose up -d --build
 
 - publiek scoreboard: `http://localhost:3000`
 - admin login: `http://localhost:3000/admin/login`
+- Portainer: `http://localhost:9000`
+
+Bij de eerste keer openen van Portainer maak je zelf een admin-account aan. Daarna kun je de lokale Docker-omgeving kiezen en de containers bekijken, logs openen en services herstarten.
 
 ## Eerste run op een andere pc of VPS
 
@@ -87,6 +90,7 @@ Voor productie of een VPS:
 - gebruik sterke, unieke waarden voor `POSTGRES_PASSWORD`, `ADMIN_ACCESS_CODE` en `ADMIN_SESSION_TOKEN`
 - publiceer alleen de poorten die je echt nodig hebt
 - gebruik bij voorkeur een reverse proxy met HTTPS voor publiek verkeer
+- scherm Portainer op een VPS goed af of zet hem niet publiek open zonder extra beveiliging
 
 ## Admin en publiek gescheiden
 
