@@ -493,10 +493,64 @@ h2 {
   margin-bottom: 14px;
 }
 
+.driver-field {
+  align-self: start;
+}
+
+.driver-builder-highlight {
+  margin-bottom: 0;
+  padding: 14px;
+  border: 1px solid rgba(var(--accent-2-rgb), 0.34);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(var(--accent-rgb), 0.16), rgba(var(--accent-2-rgb), 0.12)),
+    rgba(255, 255, 255, 0.04);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 14px 28px rgba(0, 0, 0, 0.18);
+}
+
+.driver-builder-spacer {
+  min-height: 72px;
+  margin-bottom: 0;
+  padding: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .driver-builder-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto auto;
   gap: 10px;
+}
+
+.driver-builder-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid rgba(var(--accent-2-rgb), 0.5);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(var(--accent-2-rgb), 0.95), rgba(var(--accent-rgb), 0.88));
+  color: #03111e;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 24px rgba(var(--accent-rgb), 0.24);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.driver-builder-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(var(--accent-rgb), 0.3);
+  filter: brightness(1.02);
+}
+
+.driver-builder-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
 }
 
 .driver-builder-input {

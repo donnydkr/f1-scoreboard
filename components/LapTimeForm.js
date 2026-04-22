@@ -185,33 +185,79 @@ export function LapTimeForm({ initialDrivers = [] }) {
   return (
     <form className="admin-form" onSubmit={handleSubmit}>
       <div className="form-grid">
-        <label className="field">
-          <span>{adminText.lapForm.driverLabel}</span>
-          <select name="driverName" value={values.driverName} onChange={updateValue} required>
-            <option value="" disabled>
-              {adminText.lapForm.driverPlaceholder}
-            </option>
-            {drivers.map((driver) => (
-              <option key={driver.id || driver.name} value={driver.name}>
-                {driver.name}
+        <div className="field driver-field">
+          <label className="field">
+            <span>{adminText.lapForm.driverLabel}</span>
+            <select name="driverName" value={values.driverName} onChange={updateValue} required>
+              <option value="" disabled>
+                {adminText.lapForm.driverPlaceholder}
               </option>
-            ))}
-          </select>
-        </label>
+              {drivers.map((driver) => (
+                <option key={driver.id || driver.name} value={driver.name}>
+                  {driver.name}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        <label className="field">
-          <span>{adminText.lapForm.circuitLabel}</span>
-          <select name="trackName" value={values.trackName} onChange={updateValue} required>
-            <option value="" disabled>
-              {adminText.lapForm.circuitPlaceholder}
-            </option>
-            {trackOptions.map((track) => (
-              <option key={track} value={track}>
-                {track}
+          <div className="driver-builder driver-builder-highlight">
+            {isCreatingDriver ? (
+              <div className="driver-builder-row">
+                <input
+                  className="driver-builder-input"
+                  value={newDriverName}
+                  onChange={(event) => setNewDriverName(event.target.value)}
+                  placeholder={adminText.lapForm.newDriverPlaceholder}
+                  autoComplete="off"
+                />
+                <button className="primary-button compact-button" type="button" onClick={handleCreateDriver}>
+                  {adminText.lapForm.saveDriver}
+                </button>
+                <button
+                  className="ghost-button compact-button"
+                  type="button"
+                  onClick={() => {
+                    setIsCreatingDriver(false);
+                    setNewDriverName("");
+                    setError("");
+                  }}
+                >
+                  {adminText.lapForm.cancelDriver}
+                </button>
+              </div>
+            ) : (
+              <button
+                className="driver-builder-button"
+                type="button"
+                onClick={() => {
+                  setIsCreatingDriver(true);
+                  setFeedback("");
+                  setError("");
+                }}
+              >
+                {adminText.lapForm.createDriver}
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="field driver-field">
+          <label className="field">
+            <span>{adminText.lapForm.circuitLabel}</span>
+            <select name="trackName" value={values.trackName} onChange={updateValue} required>
+              <option value="" disabled>
+                {adminText.lapForm.circuitPlaceholder}
               </option>
-            ))}
-          </select>
-        </label>
+              {trackOptions.map((track) => (
+                <option key={track} value={track}>
+                  {track}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <div className="driver-builder driver-builder-spacer" aria-hidden="true" />
+        </div>
 
         <label className="field">
           <span>{adminText.lapForm.lapTimeLabel}</span>
@@ -230,46 +276,6 @@ export function LapTimeForm({ initialDrivers = [] }) {
           <span>{adminText.lapForm.sessionDateLabel}</span>
           <input type="date" name="sessionDate" value={values.sessionDate} onChange={updateValue} required />
         </label>
-      </div>
-
-      <div className="driver-builder">
-        {isCreatingDriver ? (
-          <div className="driver-builder-row">
-            <input
-              className="driver-builder-input"
-              value={newDriverName}
-              onChange={(event) => setNewDriverName(event.target.value)}
-              placeholder={adminText.lapForm.newDriverPlaceholder}
-              autoComplete="off"
-            />
-            <button className="ghost-button compact-button" type="button" onClick={handleCreateDriver}>
-              {adminText.lapForm.saveDriver}
-            </button>
-            <button
-              className="ghost-button compact-button"
-              type="button"
-              onClick={() => {
-                setIsCreatingDriver(false);
-                setNewDriverName("");
-                setError("");
-              }}
-            >
-              {adminText.lapForm.cancelDriver}
-            </button>
-          </div>
-        ) : (
-          <button
-            className="ghost-button compact-button"
-            type="button"
-            onClick={() => {
-              setIsCreatingDriver(true);
-              setFeedback("");
-              setError("");
-            }}
-          >
-            {adminText.lapForm.createDriver}
-          </button>
-        )}
       </div>
       {error ? <p className="form-error">{error}</p> : null}
       {feedback ? <p className="form-success">{feedback}</p> : null}
