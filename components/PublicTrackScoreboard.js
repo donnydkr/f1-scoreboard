@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { DriverName } from "@/components/DriverName";
+import { RainIndicator } from "@/components/RainIndicator";
 import { ScoreboardTable } from "@/components/ScoreboardTable";
 import { getCircuitAsset, getCircuitFlagAsset } from "@/lib/circuit-assets";
 import { publicText } from "@/lib/public-text";
@@ -62,6 +63,10 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
   const topLapTimes = useMemo(() => sortByBestLap(filteredEntries).slice(0, 10), [filteredEntries]);
   const recentLapTimes = useMemo(() => sortByRecent(filteredEntries).slice(0, 8), [filteredEntries]);
   const bestLap = topLapTimes[0];
+  const bestWetLap = useMemo(
+    () => sortByBestLap(filteredEntries.filter((entry) => entry.is_wet))[0],
+    [filteredEntries]
+  );
   const podiumLapTimes = topLapTimes.slice(0, 3);
   const selectedTrackImage = getCircuitAsset(selectedTrack);
   const selectedTrackFlag = getCircuitFlagAsset(selectedTrack);
@@ -88,7 +93,16 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
         </article>
         <article className="stat-card">
           <p className="stat-label">{publicText.scoreboard.fastestLapLabel}</p>
-          <p className="stat-value">{bestLap ? formatLapTime(bestLap.lap_time_ms) : "--:--.---"}</p>
+          <p className="stat-value">
+            {bestLap ? (
+              <span className="lap-value-content">
+                <span>{formatLapTime(bestLap.lap_time_ms)}</span>
+                <RainIndicator isWet={bestLap.is_wet} size="large" />
+              </span>
+            ) : (
+              "--:--.---"
+            )}
+          </p>
         </article>
         <article className="stat-card">
           <p className="stat-label">{publicText.scoreboard.topThreeLabel}</p>
@@ -101,7 +115,12 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
               {podiumLapTimes.map((entry, index) => (
                 <div key={entry.id} className="podium-item">
                   <span className="podium-rank">{index + 1}</span>
-                  <span className="podium-lap">{formatLapTime(entry.lap_time_ms)}</span>
+                  <span className="podium-lap">
+                    <span className="lap-value-content">
+                      <span>{formatLapTime(entry.lap_time_ms)}</span>
+                      <RainIndicator isWet={entry.is_wet} size="large" />
+                    </span>
+                  </span>
                   <span className="podium-driver">
                     <DriverName name={entry.driver_name} />
                   </span>
@@ -112,9 +131,24 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
         </article>
         <article className="stat-card">
           <p className="stat-label">{publicText.scoreboard.fastestDriverLabel}</p>
-          <p className="stat-value stat-value-small">
-            {bestLap ? <DriverName name={bestLap.driver_name} /> : "-"}
-          </p>
+          <div className="stat-driver-stack">
+            <p className="stat-value stat-value-small">
+              {bestLap ? <DriverName name={bestLap.driver_name} /> : "-"}
+            </p>
+            <div className="stat-secondary-driver">
+              <p className="stat-secondary-label">{publicText.scoreboard.fastestWetDriverLabel}</p>
+              <p className="stat-secondary-value">
+                {bestWetLap ? (
+                  <span className="lap-value-content">
+                    <DriverName name={bestWetLap.driver_name} />
+                    <RainIndicator isWet={bestWetLap.is_wet} size="large" />
+                  </span>
+                ) : (
+                  "-"
+                )}
+              </p>
+            </div>
+          </div>
         </article>
       </section>
 

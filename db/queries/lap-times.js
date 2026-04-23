@@ -9,6 +9,7 @@ export async function getTopLapTimes(limit = 10) {
         track_name,
         car_name,
         lap_time_ms,
+        is_wet,
         session_date,
         created_at
       from lap_times
@@ -30,6 +31,7 @@ export async function getAllLapTimes() {
         track_name,
         car_name,
         lap_time_ms,
+        is_wet,
         session_date,
         created_at
       from lap_times
@@ -49,6 +51,7 @@ export async function getRecentLapTimes(limit = 12) {
         track_name,
         car_name,
         lap_time_ms,
+        is_wet,
         session_date,
         created_at
       from lap_times
@@ -77,16 +80,18 @@ export async function createLapTime(input) {
           car_name,
           lap_time_ms,
           lap_time_display,
+          is_wet,
           session_date,
           notes,
           created_at
         from lap_times
         where driver_name = $1
           and track_name = $2
+          and is_wet = $3
         order by lap_time_ms asc, created_at asc
         for update
       `,
-      [input.driverName, input.trackName]
+      [input.driverName, input.trackName, input.isWet]
     );
 
     const existingBest = existingResult.rows[0] || null;
@@ -106,8 +111,9 @@ export async function createLapTime(input) {
           delete from lap_times
           where driver_name = $1
             and track_name = $2
+            and is_wet = $3
         `,
-        [input.driverName, input.trackName]
+        [input.driverName, input.trackName, input.isWet]
       );
     }
 
@@ -119,10 +125,11 @@ export async function createLapTime(input) {
           car_name,
           lap_time_ms,
           lap_time_display,
+          is_wet,
           session_date,
           notes
         )
-        values ($1, $2, $3, $4, $5, $6, $7)
+        values ($1, $2, $3, $4, $5, $6, $7, $8)
         returning
           id,
           driver_name,
@@ -130,6 +137,7 @@ export async function createLapTime(input) {
           car_name,
           lap_time_ms,
           lap_time_display,
+          is_wet,
           session_date,
           notes,
           created_at
@@ -140,6 +148,7 @@ export async function createLapTime(input) {
         input.carName,
         input.lapTimeMs,
         input.lapTimeDisplay,
+        input.isWet,
         input.sessionDate,
         input.notes
       ]

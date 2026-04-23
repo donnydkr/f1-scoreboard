@@ -34,7 +34,8 @@ export function AdminTrackRecentList({ entries }) {
     return entries.filter((entry) => entry.track_name === selectedTrack);
   }, [entries, selectedTrack]);
 
-  const bestLap = useMemo(() => sortByBestLap(filteredEntries)[0], [filteredEntries]);
+  const topEntries = useMemo(() => sortByBestLap(filteredEntries).slice(0, 5), [filteredEntries]);
+  const bestLap = topEntries[0];
 
   return (
     <div className="admin-track-stack">
@@ -82,7 +83,7 @@ export function AdminTrackRecentList({ entries }) {
         })}
       </div>
 
-      <RecentLapTimesList entries={filteredEntries} emptyMessage={adminText.trackList.emptyMessage} />
+      <RecentLapTimesList entries={topEntries} emptyMessage={adminText.trackList.emptyMessage} />
     </div>
   );
 }

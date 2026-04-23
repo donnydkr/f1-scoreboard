@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { DriverName } from "@/components/DriverName";
+import { RainIndicator } from "@/components/RainIndicator";
 import { adminText } from "@/lib/admin-text";
 import { formatDate, formatLapTime } from "@/lib/time";
 
@@ -70,7 +71,10 @@ export function RecentLapTimesList({ entries, emptyMessage = adminText.recentTim
         return (
           <article key={entry.id} className="mini-item">
             <div className="mini-item-row">
-              <strong>{formatLapTime(entry.lap_time_ms)}</strong>
+              <strong className="lap-value-content">
+                <span>{formatLapTime(entry.lap_time_ms)}</span>
+                <RainIndicator isWet={entry.is_wet} />
+              </strong>
               <button
                 className="danger-button"
                 type="button"

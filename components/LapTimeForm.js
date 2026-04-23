@@ -2,13 +2,16 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { RainIndicator } from "@/components/RainIndicator";
 import { adminText } from "@/lib/admin-text";
+import { isLapTimeInAllowedRange, parseLapTimeToMs } from "@/lib/time";
 
 const initialState = {
   driverName: "",
   trackName: "",
   lapTime: "",
-  sessionDate: new Date().toISOString().slice(0, 10)
+  sessionDate: new Date().toISOString().slice(0, 10),
+  isWet: false
 };
 
 const trackOptions = [
@@ -75,6 +78,11 @@ export function LapTimeForm({ initialDrivers = [] }) {
   const [feedback, setFeedback] = useState("");
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
+  const parsedLapTimeMs = parseLapTimeToMs(values.lapTime);
+  const lapTimeRangeError =
+    values.lapTime && parsedLapTimeMs && !isLapTimeInAllowedRange(parsedLapTimeMs)
+      ? adminText.api.lapTimeRangeError
+      : "";
 
   async function readJsonSafely(response) {
     const contentType = response.headers.get("content-type") || "";
@@ -92,10 +100,10 @@ export function LapTimeForm({ initialDrivers = [] }) {
   }
 
   function updateValue(event) {
-    const { name, value } = event.target;
+    const { name, value, type, checked } = event.target;
     setValues((current) => ({
       ...current,
-      [name]: name === "lapTime" ? formatLapTimeInput(value) : value
+      [name]: type === "checkbox" ? checked : name === "lapTime" ? formatLapTimeInput(value) : value
     }));
   }
 
@@ -150,6 +158,11 @@ export function LapTimeForm({ initialDrivers = [] }) {
     event.preventDefault();
     setFeedback("");
     setError("");
+
+    if (lapTimeRangeError) {
+      setError(lapTimeRangeError);
+      return;
+    }
 
     const response = await fetch("/api/lap-times", {
       method: "POST",
@@ -270,6 +283,15 @@ export function LapTimeForm({ initialDrivers = [] }) {
             placeholder={adminText.lapForm.lapTimePlaceholder}
             required
           />
+          {lapTimeRangeError ? <span className="field-error">{lapTimeRangeError}</span> : null}
+        </label>
+
+        <label className="field checkbox-field">
+          <span>{adminText.lapForm.isWetLabel}</span>
+          <span className="checkbox-input">
+            <input type="checkbox" name="isWet" checked={values.isWet} onChange={updateValue} />
+            <RainIndicator isWet size="xlarge" />
+          </span>
         </label>
 
         <label className="field">

@@ -3,7 +3,7 @@ import { AdminTrackRecentList } from "@/components/AdminTrackRecentList";
 import { LapTimeForm } from "@/components/LapTimeForm";
 import { adminText } from "@/lib/admin-text";
 import { getDrivers } from "@/db/queries/drivers";
-import { getRecentLapTimes } from "@/db/queries/lap-times";
+import { getAllLapTimes } from "@/db/queries/lap-times";
 
 export const dynamic = "force-dynamic";
 
@@ -14,7 +14,7 @@ export default async function AdminPage() {
   try {
     [drivers, recentLapTimes] = await Promise.all([
       getDrivers(),
-      getRecentLapTimes(6)
+      getAllLapTimes()
     ]);
   } catch {
     drivers = [];

@@ -3,7 +3,7 @@ import { setAppSetting } from "@/db/queries/app-settings";
 import { createLapTime } from "@/db/queries/lap-times";
 import { hasValidAdminSession } from "@/lib/auth";
 import { adminText } from "@/lib/admin-text";
-import { parseLapTimeToMs } from "@/lib/time";
+import { isLapTimeInAllowedRange, parseLapTimeToMs } from "@/lib/time";
 
 function requireText(value) {
   if (typeof value !== "string") {
@@ -11,6 +11,10 @@ function requireText(value) {
   }
 
   return value.trim();
+}
+
+function parseBoolean(value) {
+  return value === true;
 }
 
 export async function POST(request) {
@@ -25,6 +29,7 @@ export async function POST(request) {
     const trackName = requireText(body?.trackName);
     const lapTimeDisplay = requireText(body?.lapTime);
     const sessionDate = requireText(body?.sessionDate);
+    const isWet = parseBoolean(body?.isWet);
     const carName = "F1";
 
     if (!driverName || !trackName || !lapTimeDisplay || !sessionDate) {
@@ -42,6 +47,13 @@ export async function POST(request) {
       );
     }
 
+    if (!isLapTimeInAllowedRange(lapTimeMs)) {
+      return NextResponse.json(
+        { error: adminText.api.lapTimeRangeError },
+        { status: 400 }
+      );
+    }
+
     const result = await createLapTime({
       driverName,
       trackName,
@@ -49,7 +61,8 @@ export async function POST(request) {
       lapTimeDisplay,
       lapTimeMs,
       sessionDate,
-      notes: null
+      notes: null,
+      isWet
     });
 
     if (result.action === "skipped") {
