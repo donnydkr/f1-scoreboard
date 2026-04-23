@@ -215,29 +215,32 @@ export function LapTimeForm({ initialDrivers = [] }) {
 
           <div className="driver-builder driver-builder-highlight">
             {isCreatingDriver ? (
-              <div className="driver-builder-row">
+          <div className="driver-builder-row" style={{ display: "flex", flexDirection: "column", gap: "0.5rem", alignItems: "stretch", height: "auto" }}>
                 <input
                   className="driver-builder-input"
-                  style={{ flex: 1 }}
+              style={{ width: "100%", boxSizing: "border-box" }}
                   value={newDriverName}
                   onChange={(event) => setNewDriverName(event.target.value)}
                   placeholder={adminText.lapForm.newDriverPlaceholder}
                   autoComplete="off"
                 />
-                <button className="primary-button compact-button" type="button" onClick={handleCreateDriver}>
-                  {adminText.lapForm.saveDriver}
-                </button>
-                <button
-                  className="ghost-button compact-button"
-                  type="button"
-                  onClick={() => {
-                    setIsCreatingDriver(false);
-                    setNewDriverName("");
-                    setError("");
-                  }}
-                >
-                  {adminText.lapForm.cancelDriver}
-                </button>
+            <div style={{ display: "flex", gap: "0.5rem" }}>
+              <button className="primary-button compact-button" style={{ flex: 1 }} type="button" onClick={handleCreateDriver}>
+                {adminText.lapForm.saveDriver}
+              </button>
+              <button
+                className="ghost-button compact-button"
+                style={{ flex: 1 }}
+                type="button"
+                onClick={() => {
+                  setIsCreatingDriver(false);
+                  setNewDriverName("");
+                  setError("");
+                }}
+              >
+                {adminText.lapForm.cancelDriver}
+              </button>
+            </div>
               </div>
             ) : (
               <button
@@ -287,12 +290,40 @@ export function LapTimeForm({ initialDrivers = [] }) {
           {lapTimeRangeError ? <span className="field-error">{lapTimeRangeError}</span> : null}
         </label>
 
-        <label className="field checkbox-field">
-          <span>{adminText.lapForm.isWetLabel}</span>
-          <span className="checkbox-input">
-            <input type="checkbox" name="isWet" checked={values.isWet} onChange={updateValue} />
+        <label
+          className={`field checkbox-field ${values.isWet ? "is-active" : ""}`}
+          style={{
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "1rem",
+            width: "80px",
+            borderRadius: "12px",
+            transition: "all 0.2s ease-in-out",
+            border: values.isWet ? "2px solid #3b82f6" : "2px solid rgba(255, 255, 255, 0.1)",
+            backgroundColor: values.isWet ? "rgba(59, 130, 246, 0.15)" : "rgba(255, 255, 255, 0.03)",
+            boxShadow: values.isWet ? "0 0 20px rgba(59, 130, 246, 0.2)" : "none",
+            userSelect: "none"
+          }}
+          title={adminText.lapForm.isWetLabel}
+        >
+          <input
+            type="checkbox"
+            name="isWet"
+            checked={values.isWet}
+            onChange={updateValue}
+            style={{ display: "none" }}
+          />
+          <div style={{ 
+            opacity: values.isWet ? 1 : 0.3, 
+            transform: values.isWet ? "scale(1.1)" : "scale(1)",
+            transition: "all 0.2s ease-in-out",
+            filter: values.isWet ? "drop-shadow(0 0 8px #3b82f6)" : "none",
+            display: "flex"
+          }}>
             <RainIndicator isWet size="xlarge" />
-          </span>
+          </div>
         </label>
 
         <label className="field">
