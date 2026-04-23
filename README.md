@@ -40,7 +40,13 @@ De standaard `docker-compose.yml` is nu ingericht voor een productie-achtige run
 - de broncode wordt niet als volume ingemount
 - een lege Postgres-volume voert automatisch alle SQL-bestanden in `db/migrations/` uit
 
-Voor lokaal ontwikkelen kun je nog steeds handmatig `npm install` en `npm run dev` gebruiken buiten Docker.
+### Ontwikkeling (Local Dev)
+
+Voor lokaal ontwikkelen gebruiken we een `docker-compose.override.yml`. Dit zorgt voor:
+- **Hot Reloading:** Wijzigingen in de code zijn direct zichtbaar.
+- **Volumes:** De lokale code wordt in de container gemount.
+
+Start de ontwikkelomgeving simpelweg met: `docker compose up -d`. Docker pakt automatisch de override-instellingen op.
 
 1. Maak `.env` op basis van `.env.example`
 2. Vul veilige waarden in voor:

@@ -218,6 +218,7 @@ export function LapTimeForm({ initialDrivers = [] }) {
               <div className="driver-builder-row">
                 <input
                   className="driver-builder-input"
+                  style={{ flex: 1 }}
                   value={newDriverName}
                   onChange={(event) => setNewDriverName(event.target.value)}
                   placeholder={adminText.lapForm.newDriverPlaceholder}
