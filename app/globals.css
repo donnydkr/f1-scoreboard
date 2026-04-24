@@ -114,11 +114,17 @@ h2 {
   font-size: 1.05rem;
 }
 
-.admin-logout {
-  position: absolute;
-  top: 22px;
-  right: 22px;
-  z-index: 1;
+.admin-nav-actions,
+.public-nav-actions {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0 32px; /* Zorgt voor ruimte boven en onder de knoppen */
+  flex-wrap: wrap;
+}
+
+/* Zorg dat de logout knop in de flex-flow meegaat in plaats van erboven te zweven */
+.admin-nav-actions .admin-logout {
+  position: static;
 }
 
 .hero-links,
@@ -874,8 +880,8 @@ h2 {
     grid-template-columns: 1fr;
   }
 
-  .admin-logout {
-    position: static;
-    margin-bottom: 18px;
+  .admin-nav-actions,
+  .public-nav-actions {
+    margin-bottom: 24px;
   }
 }

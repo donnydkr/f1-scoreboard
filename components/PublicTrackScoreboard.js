@@ -1,10 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { DriverName } from "@/components/DriverName";
 import { RainIndicator } from "@/components/RainIndicator";
 import { ScoreboardTable } from "@/components/ScoreboardTable";
 import { getCircuitAsset, getCircuitFlagAsset } from "@/lib/circuit-assets";
+import { adminText } from "@/lib/admin-text"; // Import adminText
 import { publicText } from "@/lib/public-text";
 import { formatLapTime } from "@/lib/time";
 
@@ -39,18 +41,11 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
 
     return ALL_TRACKS;
   });
-  const previousAutoTrackRef = useRef(initialSelectedTrack);
 
   useEffect(() => {
-    if (
-      initialSelectedTrack &&
-      tracks.includes(initialSelectedTrack) &&
-      initialSelectedTrack !== previousAutoTrackRef.current
-    ) {
+    if (initialSelectedTrack && tracks.includes(initialSelectedTrack)) {
       setSelectedTrack(initialSelectedTrack);
     }
-
-    previousAutoTrackRef.current = initialSelectedTrack;
   }, [initialSelectedTrack, tracks]);
 
   useEffect(() => {
@@ -80,6 +75,11 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
 
   return (
     <>
+      <div className="public-nav-actions">
+        <Link href="/admin" className="ghost-button">
+          {adminText.page.openAdminPage}
+        </Link>
+      </div>
       <section className="stats-grid">
         <article className="stat-card">
           <p className="stat-label">{publicText.scoreboard.selectedCircuitLabel}</p>
