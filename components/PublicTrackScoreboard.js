@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { DriverName } from "@/components/DriverName";
 import { RainIndicator } from "@/components/RainIndicator";
 import { ScoreboardTable } from "@/components/ScoreboardTable";
@@ -39,11 +39,18 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
 
     return ALL_TRACKS;
   });
+  const previousAutoTrackRef = useRef(initialSelectedTrack);
 
   useEffect(() => {
-    if (initialSelectedTrack && tracks.includes(initialSelectedTrack)) {
+    if (
+      initialSelectedTrack &&
+      tracks.includes(initialSelectedTrack) &&
+      initialSelectedTrack !== previousAutoTrackRef.current
+    ) {
       setSelectedTrack(initialSelectedTrack);
     }
+
+    previousAutoTrackRef.current = initialSelectedTrack;
   }, [initialSelectedTrack, tracks]);
 
   useEffect(() => {

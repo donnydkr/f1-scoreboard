@@ -587,6 +587,20 @@ h2 {
   gap: 10px;
 }
 
+.driver-builder-row-stacked {
+  grid-template-columns: 1fr;
+}
+
+.driver-builder-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.builder-action-button {
+  width: 100%;
+}
+
 .driver-builder-button {
   display: inline-flex;
   align-items: center;
@@ -680,17 +694,12 @@ h2 {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-.checkbox-field {
-  align-self: stretch;
-}
-
-.checkbox-input {
+.rain-toggle-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  width: 100%;
-  min-height: 48px;
+  width: min(25%, 80px);
+  min-height: 52px;
   padding: 0 14px;
   border: 1px solid var(--line);
   border-radius: 14px;
@@ -709,27 +718,35 @@ h2 {
     background-color 0.2s ease;
 }
 
-.checkbox-input:hover {
-  border-color: rgba(var(--accent-2-rgb), 0.42);
+.rain-toggle-button:hover {
+  border-color: rgba(255, 255, 255, 0.2);
   transform: translateY(-1px);
 }
 
-.checkbox-input:has(input:checked) {
-  border-color: rgba(var(--accent-rgb), 0.48);
+.rain-toggle-button.is-active {
+  border-color: rgba(var(--accent-2-rgb), 0.58);
   background:
-    linear-gradient(135deg, rgba(var(--accent-rgb), 0.2), rgba(var(--accent-2-rgb), 0.12)),
-    rgba(255, 255, 255, 0.06);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    rgba(255, 255, 255, 0.05);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 14px 28px rgba(0, 0, 0, 0.2);
+    0 0 0 4px rgba(var(--accent-rgb), 0.18),
+    0 14px 30px rgba(0, 0, 0, 0.2);
 }
 
-.checkbox-input input {
-  width: 18px;
-  height: 18px;
-  margin: 0;
-  accent-color: var(--accent);
-  box-shadow: none;
+.rain-toggle-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rain-toggle-button .rain-indicator {
+  color: #8fd3ff;
+  filter: drop-shadow(0 0 10px rgba(93, 192, 255, 0.28));
+}
+
+.rain-toggle-button .rain-indicator svg {
+  fill: rgba(222, 242, 255, 0.92);
+  stroke: #5dc0ff;
 }
 
 .field input:focus,

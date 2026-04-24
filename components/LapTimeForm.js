@@ -215,32 +215,30 @@ export function LapTimeForm({ initialDrivers = [] }) {
 
           <div className="driver-builder driver-builder-highlight">
             {isCreatingDriver ? (
-          <div className="driver-builder-row" style={{ display: "flex", flexDirection: "column", gap: "0.5rem", alignItems: "stretch", height: "auto" }}>
+              <div className="driver-builder-row driver-builder-row-stacked">
                 <input
                   className="driver-builder-input"
-              style={{ width: "100%", boxSizing: "border-box" }}
                   value={newDriverName}
                   onChange={(event) => setNewDriverName(event.target.value)}
                   placeholder={adminText.lapForm.newDriverPlaceholder}
                   autoComplete="off"
                 />
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <button className="primary-button compact-button" style={{ flex: 1 }} type="button" onClick={handleCreateDriver}>
-                {adminText.lapForm.saveDriver}
-              </button>
-              <button
-                className="ghost-button compact-button"
-                style={{ flex: 1 }}
-                type="button"
-                onClick={() => {
-                  setIsCreatingDriver(false);
-                  setNewDriverName("");
-                  setError("");
-                }}
-              >
-                {adminText.lapForm.cancelDriver}
-              </button>
-            </div>
+                <div className="driver-builder-actions">
+                  <button className="primary-button compact-button builder-action-button" type="button" onClick={handleCreateDriver}>
+                    {adminText.lapForm.saveDriver}
+                  </button>
+                  <button
+                    className="ghost-button compact-button builder-action-button"
+                    type="button"
+                    onClick={() => {
+                      setIsCreatingDriver(false);
+                      setNewDriverName("");
+                      setError("");
+                    }}
+                  >
+                    {adminText.lapForm.cancelDriver}
+                  </button>
+                </div>
               </div>
             ) : (
               <button
@@ -273,7 +271,18 @@ export function LapTimeForm({ initialDrivers = [] }) {
             </select>
           </label>
 
-          <div className="driver-builder driver-builder-spacer" aria-hidden="true" />
+          <div className="driver-builder">
+            <label className={`rain-toggle-button ${values.isWet ? "is-active" : ""}`}>
+              <input
+                className="rain-toggle-input"
+                type="checkbox"
+                name="isWet"
+                checked={values.isWet}
+                onChange={updateValue}
+              />
+              <RainIndicator isWet size="large" />
+            </label>
+          </div>
         </div>
 
         <label className="field">
@@ -288,42 +297,6 @@ export function LapTimeForm({ initialDrivers = [] }) {
             required
           />
           {lapTimeRangeError ? <span className="field-error">{lapTimeRangeError}</span> : null}
-        </label>
-
-        <label
-          className={`field checkbox-field ${values.isWet ? "is-active" : ""}`}
-          style={{
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "1rem",
-            width: "80px",
-            borderRadius: "12px",
-            transition: "all 0.2s ease-in-out",
-            border: values.isWet ? "2px solid #3b82f6" : "2px solid rgba(255, 255, 255, 0.1)",
-            backgroundColor: values.isWet ? "rgba(59, 130, 246, 0.15)" : "rgba(255, 255, 255, 0.03)",
-            boxShadow: values.isWet ? "0 0 20px rgba(59, 130, 246, 0.2)" : "none",
-            userSelect: "none"
-          }}
-          title={adminText.lapForm.isWetLabel}
-        >
-          <input
-            type="checkbox"
-            name="isWet"
-            checked={values.isWet}
-            onChange={updateValue}
-            style={{ display: "none" }}
-          />
-          <div style={{ 
-            opacity: values.isWet ? 1 : 0.3, 
-            transform: values.isWet ? "scale(1.1)" : "scale(1)",
-            transition: "all 0.2s ease-in-out",
-            filter: values.isWet ? "drop-shadow(0 0 8px #3b82f6)" : "none",
-            display: "flex"
-          }}>
-            <RainIndicator isWet size="xlarge" />
-          </div>
         </label>
 
         <label className="field">
