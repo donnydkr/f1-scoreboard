@@ -25,14 +25,6 @@ export default async function HomePage() {
     <main className="site-shell">
       <AutoRefresh intervalMs={SCOREBOARD_REFRESH_MS} />
 
-      <section className="hero">
-        <p className="eyebrow">{publicText.page.eyebrow}</p>
-        <h1>{publicText.page.title}</h1>
-        <p className="hero-copy">
-          {publicText.page.intro}
-        </p>
-      </section>
-
       <PublicTrackScoreboard entries={lapTimes} initialSelectedTrack={activeCircuit} />
     </main>
   );

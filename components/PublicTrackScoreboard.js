@@ -75,11 +75,19 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
 
   return (
     <>
-      <div className="public-nav-actions">
-        <Link href="/admin" className="ghost-button">
-          {adminText.page.openAdminPage}
-        </Link>
-      </div>
+      <header className="hero">
+        <div className="public-nav-actions">
+          <Link href="/admin" className="ghost-button">
+            {adminText.page.openAdminPage}
+          </Link>
+        </div>
+        <p className="eyebrow">{publicText.page.eyebrow}</p>
+        <h1>{publicText.page.title}</h1>
+        {publicText.page.intro && (
+          <p className="hero-copy">{publicText.page.intro}</p>
+        )}
+      </header>
+
       <section className="stats-grid">
         <article className="stat-card">
           <p className="stat-label">{publicText.scoreboard.selectedCircuitLabel}</p>
