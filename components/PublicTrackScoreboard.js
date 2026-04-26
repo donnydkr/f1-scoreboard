@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import Link from "next/link";
 import { DriverName } from "@/components/DriverName";
 import { RainIndicator } from "@/components/RainIndicator";
@@ -43,9 +43,16 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
     return ALL_TRACKS;
   });
 
+  const lastHandledTrackRef = useRef(initialSelectedTrack);
+
   useEffect(() => {
-    if (initialSelectedTrack && tracks.includes(initialSelectedTrack)) {
-      setSelectedTrack(initialSelectedTrack);
+    // Schakel alleen automatisch als het actieve circuit op de server echt is veranderd
+    // ten opzichte van de vorige keer dat we dit verwerkt hebben (bijv. door een nieuwe save).
+    if (initialSelectedTrack !== lastHandledTrackRef.current) {
+      if (initialSelectedTrack && tracks.includes(initialSelectedTrack)) {
+        setSelectedTrack(initialSelectedTrack);
+      }
+      lastHandledTrackRef.current = initialSelectedTrack;
     }
   }, [initialSelectedTrack, tracks]);
 
