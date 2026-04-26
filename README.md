@@ -1,61 +1,36 @@
 # f1-scoreboard
 
-Eigen applicatie voor het invoeren, opslaan en tonen van race tijden bij de sims.
+Een simpele webapplicatie om rondetijden van simracing-sessies bij te houden en te vergelijken op een publiek scoreboard.
 
-## Wat staat er nu
-
-Deze eerste versie bevat:
-
-- een publieke scoreboard-pagina op `/`
-- een afgeschermde admin-login op `/admin/login`
-- een admin-invoerscherm op `/admin`
-- een Postgres-database in Docker
-- een eerste SQL-migratie voor `lap_times`
+## Features
+- **Publiek Scoreboard:** Overzicht van de snelste tijden per circuit.
+- **Admin Paneel:** Beveiligde omgeving (`/admin`) voor het beheren van coureurs en tijden.
+- **Automatische Migraties:** Database-schema's worden automatisch bijgewerkt via Docker.
+- **Responsive Design:** Werkt zowel op desktop als mobiel tijdens het rijden.
 
 ## Structuur
-
 - `app/`: Next.js App Router pagina's en API-routes
-- `components/`: herbruikbare UI-componenten
-- `lib/`: helpers voor database, tijd-formatting en auth
-- `db/migrations/`: SQL migraties
-- `db/queries/`: query helpers
-- `public/circuits/<slug>/`: circuitafbeelding (`track.png`) en vlag (`flag.png`) per circuit
-- `docker/`: Dockerfile voor de app
-- `docs/`: aanvullende documentatie
+- `components/`: React componenten.
+- `db/`: Database logica (queries en SQL-migraties).
+- `lib/`: Utilities voor auth, database connecties en formatting.
+- `public/circuits/`: Assets zoals circuit-outlines en vlaggen.
+- `docs/`: Diepgaande documentatie over de architectuur.
 
-## Interne referentie-docs
-
-Voor sneller begrip van de codebase staan in `docs/` ook deze referenties:
-
-- `repo-overview.md`: snelle uitleg van structuur, verantwoordelijkheden en kernbestanden
-- `architecture-and-dataflow.md`: hoe auth, pagina's, API en database samenhangen
-- `change-guide.md`: praktische checklist voor toekomstige wijzigingen
+## Documentatie
+Zie de `docs/` map voor meer details:
+- Repo Overview: Architectuur en mappenstructuur.
+- Architecture & Dataflow: Hoe data door de app stroomt.
+- Change Guide: Checklist voor het toevoegen van nieuwe features.
 
 ## Starten
 
-De standaard `docker-compose.yml` is nu ingericht voor een productie-achtige run:
+### Lokale Ontwikkeling
+De omgeving draait volledig in Docker met hot-reloading via een override file.
 
-- de app bouwt eerst met `next build`
-- de app start met `npm run start`
-- de broncode wordt niet als volume ingemount
-- een lege Postgres-volume voert automatisch alle SQL-bestanden in `db/migrations/` uit
+1. Kopieer `.env.example` naar `.env` en vul de variabelen in.
+2. Start de containers:
 
-### Ontwikkeling (Local Dev)
-
-Voor lokaal ontwikkelen gebruiken we een `docker-compose.override.yml`. Dit zorgt voor:
-- **Hot Reloading:** Wijzigingen in de code zijn direct zichtbaar.
-- **Volumes:** De lokale code wordt in de container gemount.
-
-Start de ontwikkelomgeving simpelweg met: `docker compose up -d`. Docker pakt automatisch de override-instellingen op.
-
-1. Maak `.env` op basis van `.env.example`
-2. Vul veilige waarden in voor:
-   `POSTGRES_PASSWORD`, `ADMIN_ACCESS_CODE`, `ADMIN_SESSION_TOKEN`
-3. Gebruik voor lokaal draaien buiten Docker Compose standaard:
-   `DATABASE_HOST=localhost`
-4. Start de omgeving:
-
-```powershell
+```bash
 docker compose up -d --build
 ```
 
