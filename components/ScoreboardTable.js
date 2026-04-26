@@ -3,7 +3,7 @@ import { DriverName } from "@/components/DriverName";
 import { RainIndicator } from "@/components/RainIndicator";
 import { publicText } from "@/lib/public-text";
 
-export function ScoreboardTable({ entries, title, emptyMessage }) {
+export function ScoreboardTable({ entries, title, emptyMessage, showSetup = false }) {
   return (
     <section className="panel">
       <div className="panel-header">
@@ -20,6 +20,7 @@ export function ScoreboardTable({ entries, title, emptyMessage }) {
                 <th>{publicText.table.driver}</th>
                 <th>{publicText.table.lap}</th>
                 <th>{publicText.table.circuit}</th>
+                {showSetup && <th>{publicText.table.setup}</th>}
                 <th>{publicText.table.date}</th>
               </tr>
             </thead>
@@ -35,6 +36,7 @@ export function ScoreboardTable({ entries, title, emptyMessage }) {
                     </span>
                   </td>
                   <td>{entry.track_name}</td>
+                  {showSetup && <td>{entry.setup}</td>}
                   <td>{formatDate(entry.session_date)}</td>
                 </tr>
               ))}

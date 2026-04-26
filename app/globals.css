@@ -253,6 +253,37 @@ h2 {
   gap: 8px;
 }
 
+.setup-display, .setup-field-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.setup-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--accent-2);
+}
+
+.setup-indicator-large {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.setup-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  height: 52px;
+  background: var(--bg-panel-soft);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
 .rain-indicator {
   display: inline-flex;
   align-items: center;
@@ -264,8 +295,8 @@ h2 {
 }
 
 .rain-indicator-large {
-  width: 1.45rem;
-  height: 1.45rem;
+  width: 1.6rem;
+  height: 1.6rem;
 }
 
 .rain-indicator-xlarge {
@@ -562,6 +593,10 @@ h2 {
   gap: 16px;
 }
 
+.form-full-width {
+  grid-column: 1 / -1;
+}
+
 .driver-builder {
   display: grid;
   gap: 10px;
@@ -710,9 +745,9 @@ h2 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: min(25%, 80px);
-  min-height: 52px;
-  padding: 0 14px;
+  min-width: 52px;
+  height: 52px;
+  padding: 0;
   border: 1px solid var(--line);
   border-radius: 14px;
   background:

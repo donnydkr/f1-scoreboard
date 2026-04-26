@@ -5,6 +5,7 @@ import Link from "next/link";
 import { DriverName } from "@/components/DriverName";
 import { RainIndicator } from "@/components/RainIndicator";
 import { ScoreboardTable } from "@/components/ScoreboardTable";
+import { SetupIndicator } from "@/components/SetupIndicator";
 import { getCircuitAsset, getCircuitFlagAsset } from "@/lib/circuit-assets";
 import { adminText } from "@/lib/admin-text"; // Import adminText
 import { publicText } from "@/lib/public-text";
@@ -108,16 +109,24 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
         </article>
         <article className="stat-card">
           <p className="stat-label">{publicText.scoreboard.fastestLapLabel}</p>
-          <p className="stat-value">
-            {bestLap ? (
-              <span className="lap-value-content">
-                <span>{formatLapTime(bestLap.lap_time_ms)}</span>
-                <RainIndicator isWet={bestLap.is_wet} size="large" />
-              </span>
-            ) : (
-              "--:--.---"
+          <div className="stat-driver-stack">
+            <p className="stat-value">
+              {bestLap ? (
+                <span className="lap-value-content">
+                  <span>{formatLapTime(bestLap.lap_time_ms)}</span>
+                  <RainIndicator isWet={bestLap.is_wet} size="large" />
+                </span>
+              ) : (
+                "--:--.---"
+              )}
+            </p>
+            {bestLap?.setup && (
+              <div className="setup-display">
+                <SetupIndicator setup={bestLap.setup} size="large" />
+                <p className="stat-secondary-label">{bestLap.setup}</p>
+              </div>
             )}
-          </p>
+          </div>
         </article>
         <article className="stat-card">
           <p className="stat-label">{publicText.scoreboard.topThreeLabel}</p>

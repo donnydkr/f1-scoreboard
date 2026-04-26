@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { RainIndicator } from "@/components/RainIndicator";
+import { SetupIndicator } from "@/components/SetupIndicator";
 import { adminText } from "@/lib/admin-text";
 import { isLapTimeInAllowedRange, parseLapTimeToMs } from "@/lib/time";
 
@@ -11,7 +12,8 @@ const initialState = {
   trackName: "",
   lapTime: "",
   sessionDate: new Date().toISOString().slice(0, 10),
-  isWet: false
+  isWet: false,
+  setup: "Balanced"
 };
 
 const trackOptions = [
@@ -39,6 +41,14 @@ const trackOptions = [
   "Las Vegas",
   "Lusail International",
   "Yas Marina"
+];
+
+const setupOptions = [
+  "Maximum Downforce",
+  "Increased Downforce",
+  "Balanced",
+  "Increased Top Speed",
+  "Maximum Top Speed"
 ];
 
 function formatLapTimeInput(rawValue) {
@@ -198,21 +208,47 @@ export function LapTimeForm({ initialDrivers = [] }) {
   return (
     <form className="admin-form" onSubmit={handleSubmit}>
       <div className="form-grid">
-        <div className="field driver-field">
-          <label className="field">
-            <span>{adminText.lapForm.driverLabel}</span>
-            <select name="driverName" value={values.driverName} onChange={updateValue} required>
-              <option value="" disabled>
-                {adminText.lapForm.driverPlaceholder}
+        <label className="field">
+          <span>{adminText.lapForm.driverLabel}</span>
+          <select name="driverName" value={values.driverName} onChange={updateValue} required>
+            <option value="" disabled>
+              {adminText.lapForm.driverPlaceholder}
+            </option>
+            {drivers.map((driver) => (
+              <option key={driver.id || driver.name} value={driver.name}>
+                {driver.name}
               </option>
-              {drivers.map((driver) => (
-                <option key={driver.id || driver.name} value={driver.name}>
-                  {driver.name}
+            ))}
+          </select>
+        </label>
+
+        <label className="field">
+          <span>{adminText.lapForm.circuitLabel}</span>
+          <div className="setup-field-group">
+            <select name="trackName" value={values.trackName} onChange={updateValue} required>
+              <option value="" disabled>
+                {adminText.lapForm.circuitPlaceholder}
+              </option>
+              {trackOptions.map((track) => (
+                <option key={track} value={track}>
+                  {track}
                 </option>
               ))}
             </select>
-          </label>
+            <label className={`rain-toggle-button ${values.isWet ? "is-active" : ""}`}>
+              <input
+                className="rain-toggle-input"
+                type="checkbox"
+                name="isWet"
+                checked={values.isWet}
+                onChange={updateValue}
+              />
+              <RainIndicator isWet size="large" />
+            </label>
+          </div>
+        </label>
 
+        <div className="form-full-width">
           <div className="driver-builder driver-builder-highlight">
             {isCreatingDriver ? (
               <div className="driver-builder-row driver-builder-row-stacked">
@@ -256,35 +292,6 @@ export function LapTimeForm({ initialDrivers = [] }) {
           </div>
         </div>
 
-        <div className="field driver-field">
-          <label className="field">
-            <span>{adminText.lapForm.circuitLabel}</span>
-            <select name="trackName" value={values.trackName} onChange={updateValue} required>
-              <option value="" disabled>
-                {adminText.lapForm.circuitPlaceholder}
-              </option>
-              {trackOptions.map((track) => (
-                <option key={track} value={track}>
-                  {track}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <div className="driver-builder">
-            <label className={`rain-toggle-button ${values.isWet ? "is-active" : ""}`}>
-              <input
-                className="rain-toggle-input"
-                type="checkbox"
-                name="isWet"
-                checked={values.isWet}
-                onChange={updateValue}
-              />
-              <RainIndicator isWet size="large" />
-            </label>
-          </div>
-        </div>
-
         <label className="field">
           <span>{adminText.lapForm.lapTimeLabel}</span>
           <input
@@ -297,6 +304,22 @@ export function LapTimeForm({ initialDrivers = [] }) {
             required
           />
           {lapTimeRangeError ? <span className="field-error">{lapTimeRangeError}</span> : null}
+        </label>
+
+        <label className="field">
+          <span>{adminText.lapForm.setupLabel}</span>
+          <div className="setup-field-group">
+            <select name="setup" value={values.setup} onChange={updateValue} required>
+              {setupOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+            <div className="setup-preview">
+              <SetupIndicator setup={values.setup} size="large" />
+            </div>
+          </div>
         </label>
 
         <label className="field">

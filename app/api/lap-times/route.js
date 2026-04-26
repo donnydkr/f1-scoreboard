@@ -29,6 +29,7 @@ export async function POST(request) {
     const trackName = requireText(body?.trackName);
     const lapTimeDisplay = requireText(body?.lapTime);
     const sessionDate = requireText(body?.sessionDate);
+    const setup = requireText(body?.setup) || "Balanced";
     const isWet = parseBoolean(body?.isWet);
     const carName = "F1";
 
@@ -62,7 +63,8 @@ export async function POST(request) {
       lapTimeMs,
       sessionDate,
       notes: null,
-      isWet
+      isWet,
+      setup
     });
 
     if (result.action === "skipped") {
