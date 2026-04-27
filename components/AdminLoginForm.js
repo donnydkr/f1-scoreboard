@@ -30,8 +30,12 @@ export function AdminLoginForm() {
     }
 
     startTransition(() => {
-      router.refresh();
-      router.push("/admin");
+      try {
+        router.refresh();
+        router.push("/admin");
+      } catch (err) {
+        setError("Navigatie mislukt, probeer handmatig te refreshen.");
+      }
     });
   }
 
