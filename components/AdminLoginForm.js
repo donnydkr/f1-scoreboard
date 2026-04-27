@@ -30,8 +30,8 @@ export function AdminLoginForm() {
     }
 
     startTransition(() => {
-      router.push("/admin");
       router.refresh();
+      router.push("/admin");
     });
   }
 
