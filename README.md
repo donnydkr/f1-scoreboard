@@ -24,11 +24,20 @@ Zie de `docs/` map voor meer details:
 
 ## Starten
 
-### Lokale Ontwikkeling
+### Authenticatie & Setup
 De omgeving draait volledig in Docker met hot-reloading via een override file.
 
-1. Kopieer `.env.example` naar `.env` en vul de variabelen in.
-2. Start de containers:
+1. **Git Auth:** Gebruik bij voorkeur SSH. Voor 1Password gebruikers, voeg dit toe aan `~/.ssh/config`:
+   ```ssh
+   Host *
+     IdentityAgent "~/Library/Group Containers/2BU8B4S4NG.com.1password/t/agent.sock"
+   ```
+   Update daarna je remote:
+   ```bash
+   git remote set-url origin git@github.com:jouw-user/f1-scoreboard.git
+   ```
+2. **Omgeving:** Kopieer `.env.example` naar `.env` en vul de variabelen in.
+3. **Docker:** Start de containers:
 
 ```bash
 docker compose up -d --build
