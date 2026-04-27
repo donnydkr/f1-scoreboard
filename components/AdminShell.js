@@ -9,6 +9,9 @@ export function AdminShell({ children }) {
           <Link href="/" className="ghost-button">
             {adminText.page.openPublicScoreboard}
           </Link>
+          <a href="/api/admin/export" className="ghost-button" download>
+            Export CSV
+          </a>
           <form className="admin-logout" action="/api/auth/logout" method="post">
             <button className="ghost-button" type="submit">
               {adminText.page.logout}

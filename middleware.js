@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { hasValidAdminSession } from "@/lib/auth";
 
-export function middleware(request) {
+export async function middleware(request) {
   const { pathname } = request.nextUrl;
 
   if (!pathname.startsWith("/admin")) {
@@ -12,7 +12,7 @@ export function middleware(request) {
     return NextResponse.next();
   }
 
-  if (hasValidAdminSession(request)) {
+  if (await hasValidAdminSession(request)) {
     return NextResponse.next();
   }
 
