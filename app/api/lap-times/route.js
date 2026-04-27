@@ -31,9 +31,10 @@ export async function POST(request) {
     const sessionDate = requireText(body?.sessionDate);
     const setup = requireText(body?.setup) || "Balanced";
     const isWet = parseBoolean(body?.isWet);
+    const seat = requireText(body?.selectedSeat); // Lees de geselecteerde stoel
     const carName = "F1";
 
-    if (!driverName || !trackName || !lapTimeDisplay || !sessionDate) {
+    if (!driverName || !trackName || !lapTimeDisplay || !sessionDate || !seat) {
       return NextResponse.json(
         { error: adminText.api.lapTimeMissingFields },
         { status: 400 }
@@ -64,7 +65,8 @@ export async function POST(request) {
       sessionDate,
       notes: null,
       isWet,
-      setup
+      setup,
+      seat // Geef de stoel door aan de database query
     });
 
     if (result.action === "skipped") {

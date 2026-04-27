@@ -10,6 +10,7 @@ export async function getTopLapTimes(limit = 10) {
         car_name,
         lap_time_ms,
         setup,
+        seat,
         is_wet,
         session_date,
         created_at
@@ -33,6 +34,7 @@ export async function getAllLapTimes() {
         car_name,
         lap_time_ms,
         setup,
+        seat,
         is_wet,
         session_date,
         created_at
@@ -54,6 +56,7 @@ export async function getRecentLapTimes(limit = 12) {
         car_name,
         lap_time_ms,
         setup,
+        seat,
         is_wet,
         session_date,
         created_at
@@ -84,6 +87,7 @@ export async function createLapTime(input) {
           lap_time_ms,
           lap_time_display,
           setup,
+          seat,
           is_wet,
           session_date,
           notes,
@@ -132,9 +136,10 @@ export async function createLapTime(input) {
           setup,
           is_wet,
           session_date,
-          notes
+          notes,
+          seat
         )
-        values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
         returning
           id,
           driver_name,
@@ -144,6 +149,7 @@ export async function createLapTime(input) {
           lap_time_display,
           setup,
           is_wet,
+          seat,
           session_date,
           notes,
           created_at
@@ -157,7 +163,8 @@ export async function createLapTime(input) {
         input.setup,
         input.isWet,
         input.sessionDate,
-        input.notes
+        input.notes,
+        input.seat
       ]
     );
 

@@ -86,6 +86,7 @@ export function LapTimeForm({ initialDrivers = [] }) {
   const [isCreatingDriver, setIsCreatingDriver] = useState(false);
   const [newDriverName, setNewDriverName] = useState("");
   const [feedback, setFeedback] = useState("");
+  const [selectedSeat, setSelectedSeat] = useState("Stoel 1"); // Default to Stoel 1
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
   const parsedLapTimeMs = parseLapTimeToMs(values.lapTime);
@@ -108,6 +109,8 @@ export function LapTimeForm({ initialDrivers = [] }) {
       return null;
     }
   }
+
+  const seatOptions = ["Stoel 1", "Stoel 2"];
 
   function updateValue(event) {
     const { name, value, type, checked } = event.target;
@@ -179,7 +182,8 @@ export function LapTimeForm({ initialDrivers = [] }) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(values)
+      body: JSON.stringify({
+        ...values, selectedSeat: selectedSeat }) // Voeg selectedSeat toe aan de payload
     });
 
     const payload = await readJsonSafely(response);
@@ -248,8 +252,9 @@ export function LapTimeForm({ initialDrivers = [] }) {
           </div>
         </label>
 
-        <div className="form-full-width">
-          <div className="driver-builder driver-builder-highlight">
+        <div className="field">
+          <span>{adminText.lapForm.createDriver}</span>
+          <div className="driver-builder-highlight">
             {isCreatingDriver ? (
               <div className="driver-builder-row driver-builder-row-stacked">
                 <input
@@ -291,6 +296,15 @@ export function LapTimeForm({ initialDrivers = [] }) {
             )}
           </div>
         </div>
+
+        <label className="field">
+          <span>{adminText.lapForm.seatLabel}</span>
+          <select name="selectedSeat" value={selectedSeat} onChange={(e) => setSelectedSeat(e.target.value)}>
+            {seatOptions.map((seat) => (
+              <option key={seat} value={seat}>{seat}</option>
+            ))}
+          </select>
+        </label>
 
         <label className="field">
           <span>{adminText.lapForm.lapTimeLabel}</span>

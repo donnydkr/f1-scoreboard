@@ -133,6 +133,11 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
                 <p className="stat-secondary-label">{bestLap.setup}</p>
               </div>
             )}
+            {bestLap?.seat && (
+              <div className="seat-display">
+                <p className="stat-secondary-label">{bestLap.seat}</p>
+              </div>
+            )}
           </div>
         </article>
         <article className="stat-card">

@@ -20,6 +20,7 @@ export function ScoreboardTable({ entries, title, emptyMessage, showSetup = fals
                 <th>{publicText.table.driver}</th>
                 <th>{publicText.table.lap}</th>
                 <th>{publicText.table.circuit}</th>
+                <th>{publicText.table.seat}</th>
                 {showSetup && <th>{publicText.table.setup}</th>}
                 <th>{publicText.table.date}</th>
               </tr>
@@ -36,6 +37,7 @@ export function ScoreboardTable({ entries, title, emptyMessage, showSetup = fals
                     </span>
                   </td>
                   <td>{entry.track_name}</td>
+                  <td>{entry.seat}</td>
                   {showSetup && <td>{entry.setup}</td>}
                   <td>{formatDate(entry.session_date)}</td>
                 </tr>
