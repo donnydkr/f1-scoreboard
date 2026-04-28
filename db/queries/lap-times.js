@@ -46,6 +46,30 @@ export async function getAllLapTimes() {
   return result.rows;
 }
 
+export async function getLapTimesForExport() {
+  const result = await sql(
+    `
+      select
+        id,
+        driver_name,
+        track_name,
+        car_name,
+        lap_time_display,
+        lap_time_ms,
+        setup,
+        seat,
+        is_wet,
+        session_date,
+        notes,
+        created_at
+      from lap_times
+      order by created_at desc
+    `
+  );
+
+  return result.rows;
+}
+
 export async function getRecentLapTimes(limit = 12) {
   const result = await sql(
     `
