@@ -16,7 +16,7 @@ const confettiPieces = Array.from({ length: 40 }, (_, index) => ({
   height: `${14 + (index % 3) * 3}px`
 }));
 
-export function CircuitRecordCelebration({ open, record, title, description, onClose }) {
+export function CircuitRecordCelebration({ open, record, title, onClose }) {
   useEffect(() => {
     if (!open) {
       return undefined;

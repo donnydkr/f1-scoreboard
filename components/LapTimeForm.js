@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { CircuitRecordCelebration } from "@/components/CircuitRecordCelebration";
 import { RainIndicator } from "@/components/RainIndicator";
 import { SetupIndicator } from "@/components/SetupIndicator";
-import { circuitNames } from "@/lib/circuit-assets";
+import { circuitNames, getCircuitFlagAsset } from "@/lib/circuit-assets";
 import { adminText } from "@/lib/admin-text";
 import { parseLapTimeToMs, isLapTimeInAllowedRange } from "@/lib/time";
 
@@ -35,6 +35,18 @@ function TrashIcon() {
       <path d="M19 6l-1 14H6L5 6" />
       <path d="M10 11v5" />
       <path d="M14 11v5" />
+    </svg>
+  );
+}
+
+function SeatWheelIcon() {
+  return (
+    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M8.5 12h7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M12 8.5v7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M9.5 9.5l1.8 2.5L9.5 15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14.5 9.5l-1.8 2.5L14.5 15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -72,6 +84,9 @@ export function LapTimeForm({ initialDrivers = [] }) {
   const [values, setValues] = useState(initialState);
   const [drivers, setDrivers] = useState(() => sortDrivers(initialDrivers));
   const [isDriverMenuOpen, setIsDriverMenuOpen] = useState(false);
+  const [isCircuitMenuOpen, setIsCircuitMenuOpen] = useState(false);
+  const [isSetupMenuOpen, setIsSetupMenuOpen] = useState(false);
+  const [isSeatMenuOpen, setIsSeatMenuOpen] = useState(false);
   const [deletingDriverId, setDeletingDriverId] = useState(null);
   const [isCreatingDriver, setIsCreatingDriver] = useState(false);
   const [newDriverName, setNewDriverName] = useState("");
@@ -79,6 +94,9 @@ export function LapTimeForm({ initialDrivers = [] }) {
   const [error, setError] = useState("");
   const [celebrationRecord, setCelebrationRecord] = useState(null);
   const driverMenuRef = useRef(null);
+  const circuitMenuRef = useRef(null);
+  const setupMenuRef = useRef(null);
+  const seatMenuRef = useRef(null);
   const celebrationTimerRef = useRef(null);
   const [isPending, startTransition] = useTransition();
   const parsedLapTimeMs = parseLapTimeToMs(values.lapTime);
@@ -92,11 +110,26 @@ export function LapTimeForm({ initialDrivers = [] }) {
       if (driverMenuRef.current && !driverMenuRef.current.contains(event.target)) {
         setIsDriverMenuOpen(false);
       }
+
+      if (circuitMenuRef.current && !circuitMenuRef.current.contains(event.target)) {
+        setIsCircuitMenuOpen(false);
+      }
+
+      if (setupMenuRef.current && !setupMenuRef.current.contains(event.target)) {
+        setIsSetupMenuOpen(false);
+      }
+
+      if (seatMenuRef.current && !seatMenuRef.current.contains(event.target)) {
+        setIsSeatMenuOpen(false);
+      }
     }
 
     function handleKeyDown(event) {
       if (event.key === "Escape") {
         setIsDriverMenuOpen(false);
+        setIsCircuitMenuOpen(false);
+        setIsSetupMenuOpen(false);
+        setIsSeatMenuOpen(false);
       }
     }
 
@@ -165,6 +198,36 @@ export function LapTimeForm({ initialDrivers = [] }) {
       driverName
     }));
     setIsDriverMenuOpen(false);
+    setFeedback("");
+    setError("");
+  }
+
+  function selectCircuit(trackName) {
+    setValues((current) => ({
+      ...current,
+      trackName
+    }));
+    setIsCircuitMenuOpen(false);
+    setFeedback("");
+    setError("");
+  }
+
+  function selectSetup(setup) {
+    setValues((current) => ({
+      ...current,
+      setup
+    }));
+    setIsSetupMenuOpen(false);
+    setFeedback("");
+    setError("");
+  }
+
+  function selectSeat(seat) {
+    setValues((current) => ({
+      ...current,
+      seat
+    }));
+    setIsSeatMenuOpen(false);
     setFeedback("");
     setError("");
   }
@@ -268,6 +331,11 @@ export function LapTimeForm({ initialDrivers = [] }) {
 
     if (!values.driverName) {
       setError(adminText.api.driverRequired);
+      return;
+    }
+
+    if (!values.trackName) {
+      setError(adminText.api.lapTimeMissingFields);
       return;
     }
 
@@ -387,19 +455,57 @@ export function LapTimeForm({ initialDrivers = [] }) {
           </div>
         </div>
 
-        <label className="field">
-          <span>{adminText.lapForm.circuitLabel}</span>
+        <div className="field circuit-select-field">
+          <span id="circuit-select-label">{adminText.lapForm.circuitLabel}</span>
           <div className="setup-field-group">
-            <select name="trackName" value={values.trackName} onChange={updateValue} required>
-              <option value="" disabled>
-                {adminText.lapForm.circuitPlaceholder}
-              </option>
-              {circuitNames.map((track) => (
-                <option key={track} value={track}>
-                  {track}
-                </option>
-              ))}
-            </select>
+            <div
+              className={`circuit-select${isCircuitMenuOpen ? " is-open" : ""}`}
+              ref={circuitMenuRef}
+            >
+              <button
+                className="circuit-select-trigger"
+                type="button"
+                aria-haspopup="menu"
+                aria-expanded={isCircuitMenuOpen}
+                aria-labelledby="circuit-select-label"
+                onClick={() => setIsCircuitMenuOpen((current) => !current)}
+              >
+                <span className={values.trackName ? "circuit-select-value" : "circuit-select-placeholder"}>
+                  {values.trackName || adminText.lapForm.circuitPlaceholder}
+                </span>
+                <span className="circuit-select-chevron" aria-hidden="true" />
+              </button>
+
+              {isCircuitMenuOpen ? (
+                <div className="circuit-select-menu" role="menu" aria-labelledby="circuit-select-label">
+                  {circuitNames.map((track) => {
+                    const flagSrc = getCircuitFlagAsset(track);
+                    const isSelected = track === values.trackName;
+
+                    return (
+                      <button
+                        key={track}
+                        className={`circuit-option-button${isSelected ? " is-selected" : ""}`}
+                        type="button"
+                        role="menuitemradio"
+                        aria-checked={isSelected}
+                        onClick={() => selectCircuit(track)}
+                      >
+                        {flagSrc ? (
+                          <img
+                            className="circuit-option-flag"
+                            src={flagSrc}
+                            alt=""
+                            aria-hidden="true"
+                          />
+                        ) : null}
+                        <span className="circuit-option-name">{track}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
             <label className={`rain-toggle-button ${values.isWet ? "is-active" : ""}`}>
               <input
                 className="rain-toggle-input"
@@ -411,7 +517,7 @@ export function LapTimeForm({ initialDrivers = [] }) {
               <RainIndicator isWet size="large" />
             </label>
           </div>
-        </label>
+        </div>
 
         <div className="field">
           <span>{adminText.lapForm.createDriver}</span>
@@ -458,14 +564,48 @@ export function LapTimeForm({ initialDrivers = [] }) {
           </div>
         </div>
 
-        <label className="field">
-          <span>{adminText.lapForm.seatLabel}</span>
-          <select name="seat" value={values.seat} onChange={updateValue}>
-            {seatOptions.map((seat) => (
-              <option key={seat} value={seat}>{seat}</option>
-            ))}
-          </select>
-        </label>
+        <div className="field seat-select-field">
+          <span id="seat-select-label">{adminText.lapForm.seatLabel}</span>
+          <div className="setup-field-group">
+            <div className={`seat-select${isSeatMenuOpen ? " is-open" : ""}`} ref={seatMenuRef}>
+              <button
+                className="seat-select-trigger"
+                type="button"
+                aria-haspopup="menu"
+                aria-expanded={isSeatMenuOpen}
+                aria-labelledby="seat-select-label"
+                onClick={() => setIsSeatMenuOpen((current) => !current)}
+              >
+                <span className={values.seat ? "seat-select-value" : "seat-select-placeholder"}>
+                  {values.seat || "Kies een stoel"}
+                </span>
+                <span className="seat-select-chevron" aria-hidden="true" />
+              </button>
+
+              {isSeatMenuOpen ? (
+                <div className="seat-select-menu" role="menu" aria-labelledby="seat-select-label">
+                  {seatOptions.map((seat) => {
+                    const isSelected = seat === values.seat;
+
+                    return (
+                      <button
+                        key={seat}
+                        className={`seat-option-button${isSelected ? " is-selected" : ""}`}
+                        type="button"
+                        role="menuitemradio"
+                        aria-checked={isSelected}
+                        onClick={() => selectSeat(seat)}
+                      >
+                        <SeatWheelIcon />
+                        <span className="seat-option-name">{seat}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
 
         <label className="field">
           <span>{adminText.lapForm.lapTimeLabel}</span>
@@ -482,17 +622,44 @@ export function LapTimeForm({ initialDrivers = [] }) {
         </label>
 
         <label className="field">
-          <span>{adminText.lapForm.setupLabel}</span>
+          <span id="setup-select-label">{adminText.lapForm.setupLabel}</span>
           <div className="setup-field-group">
-            <select name="setup" value={values.setup} onChange={updateValue} required>
-              {setupOptions.map((opt) => (
-                <option key={opt} value={opt}>
-                  {opt}
-                </option>
-              ))}
-            </select>
-            <div className="setup-preview">
-              <SetupIndicator setup={values.setup} size="large" />
+            <div className={`setup-select${isSetupMenuOpen ? " is-open" : ""}`} ref={setupMenuRef}>
+              <button
+                className="setup-select-trigger"
+                type="button"
+                aria-haspopup="menu"
+                aria-expanded={isSetupMenuOpen}
+                aria-labelledby="setup-select-label"
+                onClick={() => setIsSetupMenuOpen((current) => !current)}
+              >
+                <span className={values.setup ? "setup-select-value" : "setup-select-placeholder"}>
+                  {values.setup || adminText.lapForm.setupPlaceholder}
+                </span>
+                <span className="setup-select-chevron" aria-hidden="true" />
+              </button>
+
+              {isSetupMenuOpen ? (
+                <div className="setup-select-menu" role="menu" aria-labelledby="setup-select-label">
+                  {setupOptions.map((opt) => {
+                    const isSelected = opt === values.setup;
+
+                    return (
+                      <button
+                        key={opt}
+                        className={`setup-option-button${isSelected ? " is-selected" : ""}`}
+                        type="button"
+                        role="menuitemradio"
+                        aria-checked={isSelected}
+                        onClick={() => selectSetup(opt)}
+                      >
+                        <SetupIndicator setup={opt} size="large" />
+                        <span className="setup-option-name">{opt}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
             </div>
           </div>
         </label>
