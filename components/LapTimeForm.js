@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { CircuitRecordCelebration } from "@/components/CircuitRecordCelebration";
 import { RainIndicator } from "@/components/RainIndicator";
 import { SetupIndicator } from "@/components/SetupIndicator";
 import { circuitNames } from "@/lib/circuit-assets";
 import { adminText } from "@/lib/admin-text";
-import { isLapTimeInAllowedRange, parseLapTimeToMs } from "@/lib/time";
+import { parseLapTimeToMs, isLapTimeInAllowedRange } from "@/lib/time";
 
 const initialState = {
   driverName: "",
@@ -76,7 +77,9 @@ export function LapTimeForm({ initialDrivers = [] }) {
   const [newDriverName, setNewDriverName] = useState("");
   const [feedback, setFeedback] = useState("");
   const [error, setError] = useState("");
+  const [celebrationRecord, setCelebrationRecord] = useState(null);
   const driverMenuRef = useRef(null);
+  const celebrationTimerRef = useRef(null);
   const [isPending, startTransition] = useTransition();
   const parsedLapTimeMs = parseLapTimeToMs(values.lapTime);
   const lapTimeRangeError =
@@ -105,6 +108,31 @@ export function LapTimeForm({ initialDrivers = [] }) {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
+  useEffect(() => {
+    if (!celebrationRecord) {
+      if (celebrationTimerRef.current) {
+        window.clearTimeout(celebrationTimerRef.current);
+        celebrationTimerRef.current = null;
+      }
+      return undefined;
+    }
+
+    if (celebrationTimerRef.current) {
+      window.clearTimeout(celebrationTimerRef.current);
+    }
+
+    celebrationTimerRef.current = window.setTimeout(() => {
+      setCelebrationRecord(null);
+      celebrationTimerRef.current = null;
+    }, 6500);
+
+    return () => {
+      if (celebrationTimerRef.current) {
+        window.clearTimeout(celebrationTimerRef.current);
+      }
+    };
+  }, [celebrationRecord]);
 
   async function readJsonSafely(response) {
     const contentType = response.headers.get("content-type") || "";
@@ -272,7 +300,19 @@ export function LapTimeForm({ initialDrivers = [] }) {
       ...initialState,
       sessionDate: values.sessionDate || initialState.sessionDate
     });
-    setFeedback(payload?.message || adminText.lapForm.saveSuccess);
+    if (payload?.isCircuitRecord && payload?.data) {
+      setCelebrationRecord({
+        trackName: payload.data.track_name,
+        driverName: payload.data.driver_name,
+        lapTimeMs: payload.data.lap_time_ms,
+        isWet: payload.data.is_wet
+      });
+    }
+
+    setFeedback(
+      payload?.message ||
+        (payload?.isCircuitRecord ? adminText.lapForm.recordSuccess : adminText.lapForm.saveSuccess)
+    );
 
     startTransition(() => {
       router.refresh();
@@ -470,6 +510,15 @@ export function LapTimeForm({ initialDrivers = [] }) {
           {isPending ? adminText.lapForm.submitting : adminText.lapForm.submit}
         </button>
       </div>
+
+      <CircuitRecordCelebration
+        open={Boolean(celebrationRecord)}
+        record={celebrationRecord}
+        title={
+          celebrationRecord ? `Nieuwe snelste tijd op ${celebrationRecord.trackName}!` : "Nieuwe snelste tijd!"
+        }
+        onClose={() => setCelebrationRecord(null)}
+      />
     </form>
   );
 }

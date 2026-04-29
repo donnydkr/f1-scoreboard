@@ -101,6 +101,31 @@ export async function createLapTime(input) {
   try {
     await client.query("begin");
 
+    const trackBestResult = await client.query(
+      `
+        select
+          id,
+          driver_name,
+          track_name,
+          car_name,
+          lap_time_ms,
+          lap_time_display,
+          setup,
+          seat,
+          is_wet,
+          session_date,
+          notes,
+          created_at
+        from lap_times
+        where track_name = $1
+        order by lap_time_ms asc, created_at asc
+        for update
+      `,
+      [input.trackName]
+    );
+
+    const trackBestBefore = trackBestResult.rows[0] || null;
+
     const existingResult = await client.query(
       `
         select
@@ -127,13 +152,15 @@ export async function createLapTime(input) {
     );
 
     const existingBest = existingResult.rows[0] || null;
+    const isCircuitRecord = !trackBestBefore || input.lapTimeMs < trackBestBefore.lap_time_ms;
 
     if (existingBest && existingBest.lap_time_ms <= input.lapTimeMs) {
       await client.query("commit");
 
       return {
         action: "skipped",
-        data: existingBest
+        data: existingBest,
+        isCircuitRecord: false
       };
     }
 
@@ -197,7 +224,8 @@ export async function createLapTime(input) {
     return {
       action: existingBest ? "replaced" : "created",
       data: insertResult.rows[0],
-      previousBest: existingBest
+      previousBest: existingBest,
+      isCircuitRecord
     };
   } catch (error) {
     await client.query("rollback");

@@ -74,7 +74,8 @@ export async function POST(request) {
         {
           data: result.data,
           action: result.action,
-          message: adminText.api.lapTimeSkipped
+          message: adminText.api.lapTimeSkipped,
+          isCircuitRecord: false
         },
         { status: 200 }
       );
@@ -87,7 +88,8 @@ export async function POST(request) {
         {
           data: result.data,
           action: result.action,
-          message: adminText.api.lapTimeReplaced
+          message: result.isCircuitRecord ? adminText.api.lapTimeRecord : adminText.api.lapTimeReplaced,
+          isCircuitRecord: result.isCircuitRecord
         },
         { status: 201 }
       );
@@ -97,7 +99,8 @@ export async function POST(request) {
       {
         data: result.data,
         action: result.action,
-        message: adminText.api.lapTimeSaved
+        message: result.isCircuitRecord ? adminText.api.lapTimeRecord : adminText.api.lapTimeSaved,
+        isCircuitRecord: result.isCircuitRecord
       },
       { status: 201 }
     );

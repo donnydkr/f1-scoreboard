@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useRef } from "react";
 import Link from "next/link";
+import { CircuitRecordCelebration } from "@/components/CircuitRecordCelebration";
 import { DriverName } from "@/components/DriverName";
 import { RainIndicator } from "@/components/RainIndicator";
 import { ScoreboardTable } from "@/components/ScoreboardTable";
@@ -29,6 +30,30 @@ function sortByRecent(entries) {
   });
 }
 
+function getBestLapByTrack(entries) {
+  const bestByTrack = new Map();
+
+  for (const entry of entries) {
+    if (!entry.track_name) {
+      continue;
+    }
+
+    const currentBest = bestByTrack.get(entry.track_name);
+    const entryCreatedAt = new Date(entry.created_at).getTime();
+    const currentCreatedAt = currentBest ? new Date(currentBest.created_at).getTime() : null;
+
+    if (
+      !currentBest ||
+      entry.lap_time_ms < currentBest.lap_time_ms ||
+      (entry.lap_time_ms === currentBest.lap_time_ms && entryCreatedAt < currentCreatedAt)
+    ) {
+      bestByTrack.set(entry.track_name, entry);
+    }
+  }
+
+  return bestByTrack;
+}
+
 export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) {
   const tracks = useMemo(() => {
     const uniqueTracks = [...new Set(entries.map((entry) => entry.track_name).filter(Boolean))];
@@ -44,6 +69,10 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
   });
 
   const lastHandledTrackRef = useRef(initialSelectedTrack);
+  const seenBestByTrackRef = useRef(new Map());
+  const hasInitializedBestRef = useRef(false);
+  const celebrationTimerRef = useRef(null);
+  const [celebrationRecord, setCelebrationRecord] = useState(null);
 
   useEffect(() => {
     // Schakel alleen automatisch als het actieve circuit op de server echt is veranderd
@@ -55,6 +84,73 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
       lastHandledTrackRef.current = initialSelectedTrack;
     }
   }, [initialSelectedTrack, tracks]);
+
+  useEffect(() => {
+    const currentBestByTrack = getBestLapByTrack(entries);
+    const seenBestByTrack = seenBestByTrackRef.current;
+
+    if (!hasInitializedBestRef.current) {
+      currentBestByTrack.forEach((entry, trackName) => {
+        seenBestByTrack.set(trackName, {
+          id: entry.id,
+          lapTimeMs: entry.lap_time_ms,
+          trackName: entry.track_name
+        });
+      });
+      hasInitializedBestRef.current = true;
+      return;
+    }
+
+    let newestRecord = null;
+
+    currentBestByTrack.forEach((entry, trackName) => {
+      const previousBest = seenBestByTrack.get(trackName);
+
+      if (!previousBest || entry.lap_time_ms < previousBest.lapTimeMs) {
+        newestRecord = {
+          trackName: entry.track_name,
+          driverName: entry.driver_name,
+          lapTimeMs: entry.lap_time_ms,
+          isWet: entry.is_wet
+        };
+      }
+
+      seenBestByTrack.set(trackName, {
+        id: entry.id,
+        lapTimeMs: entry.lap_time_ms,
+        trackName: entry.track_name
+      });
+    });
+
+    if (newestRecord) {
+      setCelebrationRecord(newestRecord);
+    }
+  }, [entries]);
+
+  useEffect(() => {
+    if (!celebrationRecord) {
+      if (celebrationTimerRef.current) {
+        window.clearTimeout(celebrationTimerRef.current);
+        celebrationTimerRef.current = null;
+      }
+      return undefined;
+    }
+
+    if (celebrationTimerRef.current) {
+      window.clearTimeout(celebrationTimerRef.current);
+    }
+
+    celebrationTimerRef.current = window.setTimeout(() => {
+      setCelebrationRecord(null);
+      celebrationTimerRef.current = null;
+    }, 7000);
+
+    return () => {
+      if (celebrationTimerRef.current) {
+        window.clearTimeout(celebrationTimerRef.current);
+      }
+    };
+  }, [celebrationRecord]);
 
   useEffect(() => {
     if (selectedTrack !== ALL_TRACKS && !tracks.includes(selectedTrack)) {
@@ -239,6 +335,17 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
           emptyMessage={publicText.scoreboard.emptyLatestEntries}
         />
       </div>
+
+      <CircuitRecordCelebration
+        open={Boolean(celebrationRecord)}
+        record={celebrationRecord}
+        title={
+          celebrationRecord
+            ? `Nieuwe snelste tijd op ${celebrationRecord.trackName}!`
+            : "Nieuwe snelste tijd op het circuit!"
+        }
+        onClose={() => setCelebrationRecord(null)}
+      />
     </>
   );
 }
