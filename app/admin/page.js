@@ -27,7 +27,9 @@ export default async function AdminPage() {
         <section className="panel">
           <div className="panel-header">
             <h2>{adminText.page.newLapTitle}</h2>
-            <p className="subtle">{adminText.page.newLapIntro}</p>
+            {adminText.page.newLapIntro ? (
+              <p className="subtle">{adminText.page.newLapIntro}</p>
+            ) : null}
           </div>
           <div className="panel-body">
             <LapTimeForm initialDrivers={drivers} />

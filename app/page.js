@@ -3,7 +3,6 @@ import { PublicTrackScoreboard } from "@/components/PublicTrackScoreboard";
 import { getAppSetting } from "@/db/queries/app-settings";
 import { getAllLapTimes } from "@/db/queries/lap-times";
 import { SCOREBOARD_REFRESH_MS } from "@/lib/constants";
-import { publicText } from "@/lib/public-text";
 
 export const dynamic = "force-dynamic";
 

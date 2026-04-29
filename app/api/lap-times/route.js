@@ -31,7 +31,7 @@ export async function POST(request) {
     const sessionDate = requireText(body?.sessionDate);
     const setup = requireText(body?.setup) || "Balanced";
     const isWet = parseBoolean(body?.isWet);
-    const seat = requireText(body?.selectedSeat); // Lees de geselecteerde stoel
+    const seat = requireText(body?.seat) || requireText(body?.selectedSeat);
     const carName = "F1";
 
     if (!driverName || !trackName || !lapTimeDisplay || !sessionDate || !seat) {
@@ -66,7 +66,7 @@ export async function POST(request) {
       notes: null,
       isWet,
       setup,
-      seat // Geef de stoel door aan de database query
+      seat
     });
 
     if (result.action === "skipped") {

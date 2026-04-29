@@ -1,1 +1,0 @@
-ALTER TABLE lap_times ADD COLUMN setup VARCHAR(50);

@@ -99,9 +99,10 @@ De kernentiteiten zijn:
 
 Belangrijke ontwerpkeuze:
 
-- Bij het opslaan van een nieuwe tijd wordt per `driver_name + track_name` alleen de snelste tijd bewaard
+- Bij het opslaan van een nieuwe tijd wordt per `driver_name + track_name + is_wet` alleen de snelste tijd bewaard
 - Een nieuwe langzamere of gelijke tijd wordt niet opgeslagen
 - Een nieuwe snellere tijd vervangt de vorige tijd voor die combinatie
+- Setup en stoel worden als tekstwaarden op de rondetijd opgeslagen
 
 ## Config via environment variables
 

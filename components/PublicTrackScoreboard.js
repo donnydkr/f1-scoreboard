@@ -7,7 +7,7 @@ import { RainIndicator } from "@/components/RainIndicator";
 import { ScoreboardTable } from "@/components/ScoreboardTable";
 import { SetupIndicator } from "@/components/SetupIndicator";
 import { getCircuitAsset, getCircuitFlagAsset } from "@/lib/circuit-assets";
-import { adminText } from "@/lib/admin-text"; // Import adminText
+import { adminText } from "@/lib/admin-text";
 import { publicText } from "@/lib/public-text";
 import { formatLapTime } from "@/lib/time";
 

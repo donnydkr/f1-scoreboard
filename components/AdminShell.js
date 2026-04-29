@@ -20,9 +20,9 @@ export function AdminShell({ children }) {
         </div>
         <p className="eyebrow admin-eyebrow">{adminText.shell.eyebrow}</p>
         <h1>{adminText.shell.title}</h1>
-        <p className="hero-copy">
-          {adminText.shell.intro}
-        </p>
+        {adminText.shell.intro ? (
+          <p className="hero-copy">{adminText.shell.intro}</p>
+        ) : null}
       </div>
       {children}
     </main>

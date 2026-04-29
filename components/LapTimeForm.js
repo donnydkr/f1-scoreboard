@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { RainIndicator } from "@/components/RainIndicator";
 import { SetupIndicator } from "@/components/SetupIndicator";
+import { circuitNames } from "@/lib/circuit-assets";
 import { adminText } from "@/lib/admin-text";
 import { isLapTimeInAllowedRange, parseLapTimeToMs } from "@/lib/time";
 
@@ -13,35 +14,9 @@ const initialState = {
   lapTime: "",
   sessionDate: new Date().toISOString().slice(0, 10),
   isWet: false,
-  setup: "Balanced"
+  setup: "Balanced",
+  seat: "Stoel 1"
 };
-
-const trackOptions = [
-  "Albert Park",
-  "Shanghai International",
-  "Suzuka",
-  "Bahrain",
-  "Jeddah",
-  "Miami Autodrome",
-  "Imola",
-  "Monaco",
-  "Barcelona-Catalunya",
-  "Gilles Villeneuve",
-  "Red Bull Ring",
-  "Silverstone",
-  "Spa-Francorchamps",
-  "Hungaroring",
-  "Zandvoort",
-  "Monza",
-  "Baku",
-  "Marina Bay",
-  "Americas",
-  "Hermanos Rodriguez",
-  "Interlagos",
-  "Las Vegas",
-  "Lusail International",
-  "Yas Marina"
-];
 
 const setupOptions = [
   "Maximum Downforce",
@@ -100,7 +75,6 @@ export function LapTimeForm({ initialDrivers = [] }) {
   const [isCreatingDriver, setIsCreatingDriver] = useState(false);
   const [newDriverName, setNewDriverName] = useState("");
   const [feedback, setFeedback] = useState("");
-  const [selectedSeat, setSelectedSeat] = useState("Stoel 1"); // Default to Stoel 1
   const [error, setError] = useState("");
   const driverMenuRef = useRef(null);
   const [isPending, startTransition] = useTransition();
@@ -279,8 +253,7 @@ export function LapTimeForm({ initialDrivers = [] }) {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        ...values, selectedSeat: selectedSeat }) // Voeg selectedSeat toe aan de payload
+      body: JSON.stringify(values)
     });
 
     const payload = await readJsonSafely(response);
@@ -381,7 +354,7 @@ export function LapTimeForm({ initialDrivers = [] }) {
               <option value="" disabled>
                 {adminText.lapForm.circuitPlaceholder}
               </option>
-              {trackOptions.map((track) => (
+              {circuitNames.map((track) => (
                 <option key={track} value={track}>
                   {track}
                 </option>
@@ -447,7 +420,7 @@ export function LapTimeForm({ initialDrivers = [] }) {
 
         <label className="field">
           <span>{adminText.lapForm.seatLabel}</span>
-          <select name="selectedSeat" value={selectedSeat} onChange={(e) => setSelectedSeat(e.target.value)}>
+          <select name="seat" value={values.seat} onChange={updateValue}>
             {seatOptions.map((seat) => (
               <option key={seat} value={seat}>{seat}</option>
             ))}

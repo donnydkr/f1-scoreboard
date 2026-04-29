@@ -8,9 +8,9 @@ export default function AdminLoginPage() {
       <section className="login-card">
         <p className="eyebrow">{adminText.loginPage.eyebrow}</p>
         <h1>{adminText.loginPage.title}</h1>
-        <p className="hero-copy">
-          {adminText.loginPage.intro}
-        </p>
+        {adminText.loginPage.intro ? (
+          <p className="hero-copy">{adminText.loginPage.intro}</p>
+        ) : null}
         <AdminLoginForm />
         <div className="hero-links">
           <Link className="ghost-button" href="/">

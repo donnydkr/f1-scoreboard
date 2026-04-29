@@ -51,7 +51,7 @@ Daardoor worden de pagina's niet statisch gecached en blijven database-updates z
    - roept `createLapTime()` aan
 4. `createLapTime()`:
    - opent een database-transactie
-   - zoekt bestaande records voor dezelfde coureur en hetzelfde circuit
+   - zoekt bestaande records voor dezelfde coureur, hetzelfde circuit en dezelfde weersituatie
    - vergelijkt de snelste bestaande tijd met de nieuwe tijd
    - slaat langzamere of gelijke tijd niet op
    - verwijdert eerdere records voor die combinatie als de nieuwe tijd sneller is
@@ -124,7 +124,7 @@ Belangrijke bestanden:
 
 - Auth is bewust simpel gehouden: geen usersysteem, alleen een geheime code en sessiecookie
 - Het publieke scoreboard leest direct uit dezelfde database als de admin-invoer
-- Er wordt per coureur per circuit maar één snelste tijd bewaard
+- Er wordt per coureur, circuit en weersituatie maar één snelste tijd bewaard
 - UI-teksten zijn gecentraliseerd in `lib/admin-text.js` en `lib/public-text.js`
 - Styling zit grotendeels centraal in `app/globals.css`
 
