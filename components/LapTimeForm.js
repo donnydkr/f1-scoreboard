@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { RainIndicator } from "@/components/RainIndicator";
 import { SetupIndicator } from "@/components/SetupIndicator";
@@ -51,6 +51,18 @@ const setupOptions = [
   "Maximum Top Speed"
 ];
 
+function TrashIcon() {
+  return (
+    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+      <path d="M3 6h18" />
+      <path d="M8 6V4h8v2" />
+      <path d="M19 6l-1 14H6L5 6" />
+      <path d="M10 11v5" />
+      <path d="M14 11v5" />
+    </svg>
+  );
+}
+
 function formatLapTimeInput(rawValue) {
   const digits = String(rawValue || "").replace(/\D/g, "").slice(0, 8);
 
@@ -83,17 +95,42 @@ export function LapTimeForm({ initialDrivers = [] }) {
   const router = useRouter();
   const [values, setValues] = useState(initialState);
   const [drivers, setDrivers] = useState(() => sortDrivers(initialDrivers));
+  const [isDriverMenuOpen, setIsDriverMenuOpen] = useState(false);
+  const [deletingDriverId, setDeletingDriverId] = useState(null);
   const [isCreatingDriver, setIsCreatingDriver] = useState(false);
   const [newDriverName, setNewDriverName] = useState("");
   const [feedback, setFeedback] = useState("");
   const [selectedSeat, setSelectedSeat] = useState("Stoel 1"); // Default to Stoel 1
   const [error, setError] = useState("");
+  const driverMenuRef = useRef(null);
   const [isPending, startTransition] = useTransition();
   const parsedLapTimeMs = parseLapTimeToMs(values.lapTime);
   const lapTimeRangeError =
     values.lapTime && parsedLapTimeMs && !isLapTimeInAllowedRange(parsedLapTimeMs)
       ? adminText.api.lapTimeRangeError
       : "";
+
+  useEffect(() => {
+    function handlePointerDown(event) {
+      if (driverMenuRef.current && !driverMenuRef.current.contains(event.target)) {
+        setIsDriverMenuOpen(false);
+      }
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape") {
+        setIsDriverMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   async function readJsonSafely(response) {
     const contentType = response.headers.get("content-type") || "";
@@ -118,6 +155,16 @@ export function LapTimeForm({ initialDrivers = [] }) {
       ...current,
       [name]: type === "checkbox" ? checked : name === "lapTime" ? formatLapTimeInput(value) : value
     }));
+  }
+
+  function selectDriver(driverName) {
+    setValues((current) => ({
+      ...current,
+      driverName
+    }));
+    setIsDriverMenuOpen(false);
+    setFeedback("");
+    setError("");
   }
 
   async function handleCreateDriver() {
@@ -167,10 +214,60 @@ export function LapTimeForm({ initialDrivers = [] }) {
     setFeedback(adminText.lapForm.addDriverSuccess.replace("{name}", createdDriver.name));
   }
 
+  async function handleDeleteDriver(driver) {
+    if (!driver?.id) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      adminText.lapForm.confirmDeleteDriver.replace("{name}", driver.name)
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const driverId = String(driver.id);
+
+    setError("");
+    setFeedback("");
+    setDeletingDriverId(driverId);
+
+    const response = await fetch(`/api/drivers/${driver.id}`, {
+      method: "DELETE"
+    });
+
+    const payload = await readJsonSafely(response);
+
+    if (!response.ok) {
+      setDeletingDriverId(null);
+      setError(payload?.error || adminText.lapForm.deleteDriverError);
+      return;
+    }
+
+    setDrivers((current) => current.filter((currentDriver) => String(currentDriver.id) !== driverId));
+    setValues((current) => ({
+      ...current,
+      driverName: current.driverName === driver.name ? "" : current.driverName
+    }));
+    setDeletingDriverId(null);
+    setIsDriverMenuOpen(false);
+    setFeedback(adminText.lapForm.deleteDriverSuccess.replace("{name}", driver.name));
+
+    startTransition(() => {
+      router.refresh();
+    });
+  }
+
   async function handleSubmit(event) {
     event.preventDefault();
     setFeedback("");
     setError("");
+
+    if (!values.driverName) {
+      setError(adminText.api.driverRequired);
+      return;
+    }
 
     if (lapTimeRangeError) {
       setError(lapTimeRangeError);
@@ -212,19 +309,70 @@ export function LapTimeForm({ initialDrivers = [] }) {
   return (
     <form className="admin-form" onSubmit={handleSubmit}>
       <div className="form-grid">
-        <label className="field">
-          <span>{adminText.lapForm.driverLabel}</span>
-          <select name="driverName" value={values.driverName} onChange={updateValue} required>
-            <option value="" disabled>
-              {adminText.lapForm.driverPlaceholder}
-            </option>
-            {drivers.map((driver) => (
-              <option key={driver.id || driver.name} value={driver.name}>
-                {driver.name}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className="field driver-select-field">
+          <span id="driver-select-label">{adminText.lapForm.driverLabel}</span>
+          <div className={`driver-select${isDriverMenuOpen ? " is-open" : ""}`} ref={driverMenuRef}>
+            <button
+              className="driver-select-trigger"
+              type="button"
+              aria-haspopup="menu"
+              aria-expanded={isDriverMenuOpen}
+              aria-labelledby="driver-select-label"
+              onClick={() => setIsDriverMenuOpen((current) => !current)}
+            >
+              <span className={values.driverName ? "driver-select-value" : "driver-select-placeholder"}>
+                {values.driverName || adminText.lapForm.driverPlaceholder}
+              </span>
+              <span className="driver-select-chevron" aria-hidden="true" />
+            </button>
+
+            {isDriverMenuOpen ? (
+              <div className="driver-select-menu" role="menu" aria-labelledby="driver-select-label">
+                {drivers.length === 0 ? (
+                  <div className="driver-select-empty">{adminText.lapForm.emptyDrivers}</div>
+                ) : (
+                  drivers.map((driver) => {
+                    const driverId = String(driver.id || driver.name);
+                    const isSelected = driver.name === values.driverName;
+                    const deletingThisDriver = deletingDriverId === String(driver.id);
+
+                    return (
+                      <div
+                        key={driverId}
+                        className={`driver-option-row${isSelected ? " is-selected" : ""}`}
+                        role="none"
+                      >
+                        <button
+                          className="driver-option-button"
+                          type="button"
+                          role="menuitemradio"
+                          aria-checked={isSelected}
+                          disabled={Boolean(deletingDriverId)}
+                          onClick={() => selectDriver(driver.name)}
+                        >
+                          <span className="driver-option-name">{driver.name}</span>
+                        </button>
+                        <button
+                          className="driver-option-delete"
+                          type="button"
+                          aria-label={adminText.lapForm.deleteDriverAria.replace("{name}", driver.name)}
+                          title={adminText.lapForm.deleteDriver}
+                          disabled={!driver.id || Boolean(deletingDriverId)}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleDeleteDriver(driver);
+                          }}
+                        >
+                          {deletingThisDriver ? <span className="driver-option-spinner" /> : <TrashIcon />}
+                        </button>
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            ) : null}
+          </div>
+        </div>
 
         <label className="field">
           <span>{adminText.lapForm.circuitLabel}</span>
