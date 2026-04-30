@@ -1,14 +1,9 @@
 import { NextResponse } from "next/server";
 import { deleteLapTimeById } from "@/db/queries/lap-times";
-import { hasValidAdminSession } from "@/lib/auth";
 import { adminText } from "@/lib/admin-text";
 
 export async function DELETE(request, context) {
   try {
-    if (!hasValidAdminSession(request)) {
-      return NextResponse.json({ error: adminText.api.unauthorized }, { status: 401 });
-    }
-
     const params = await context?.params;
     const id = Number(params?.id);
 

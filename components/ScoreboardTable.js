@@ -1,9 +1,16 @@
 import { formatDate, formatLapTime } from "@/lib/time";
 import { DriverName } from "@/components/DriverName";
 import { RainIndicator } from "@/components/RainIndicator";
+import { SetupIndicator } from "@/components/SetupIndicator";
 import { publicText } from "@/lib/public-text";
 
-export function ScoreboardTable({ entries, title, emptyMessage, showSetup = false }) {
+export function ScoreboardTable({
+  entries,
+  title,
+  emptyMessage,
+  showSetupIcon = false,
+  showSeatOrSetupColumn = true
+}) {
   return (
     <section className="panel">
       <div className="panel-header">
@@ -20,8 +27,9 @@ export function ScoreboardTable({ entries, title, emptyMessage, showSetup = fals
                 <th>{publicText.table.driver}</th>
                 <th>{publicText.table.lap}</th>
                 <th>{publicText.table.circuit}</th>
-                <th>{publicText.table.seat}</th>
-                {showSetup && <th>{publicText.table.setup}</th>}
+                {showSeatOrSetupColumn ? (
+                  <th>{showSetupIcon ? publicText.table.setup : publicText.table.seat}</th>
+                ) : null}
                 <th>{publicText.table.date}</th>
               </tr>
             </thead>
@@ -37,8 +45,11 @@ export function ScoreboardTable({ entries, title, emptyMessage, showSetup = fals
                     </span>
                   </td>
                   <td>{entry.track_name}</td>
-                  <td>{entry.seat}</td>
-                  {showSetup && <td>{entry.setup}</td>}
+                  {showSeatOrSetupColumn ? (
+                    <td className={showSetupIcon ? "setup-table-cell" : undefined}>
+                      {showSetupIcon ? <SetupIndicator setup={entry.setup} /> : entry.seat}
+                    </td>
+                  ) : null}
                   <td>{formatDate(entry.session_date)}</td>
                 </tr>
               ))}

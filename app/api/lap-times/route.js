@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { setAppSetting } from "@/db/queries/app-settings";
 import { createLapTime } from "@/db/queries/lap-times";
-import { hasValidAdminSession } from "@/lib/auth";
 import { adminText } from "@/lib/admin-text";
 import { isLapTimeInAllowedRange, parseLapTimeToMs } from "@/lib/time";
 
@@ -19,10 +18,6 @@ function parseBoolean(value) {
 
 export async function POST(request) {
   try {
-    if (!hasValidAdminSession(request)) {
-      return NextResponse.json({ error: adminText.api.unauthorized }, { status: 401 });
-    }
-
     const body = await request.json();
 
     const driverName = requireText(body?.driverName);

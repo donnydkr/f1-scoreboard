@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { createDriver } from "@/db/queries/drivers";
-import { hasValidAdminSession } from "@/lib/auth";
 import { adminText } from "@/lib/admin-text";
 
 function requireText(value) {
@@ -13,10 +12,6 @@ function requireText(value) {
 
 export async function POST(request) {
   try {
-    if (!hasValidAdminSession(request)) {
-      return NextResponse.json({ error: adminText.api.unauthorized }, { status: 401 });
-    }
-
     const body = await request.json();
     const name = requireText(body?.name);
 

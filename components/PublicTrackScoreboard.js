@@ -173,7 +173,7 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
     () => sortByBestLap(filteredEntries.filter((entry) => entry.is_wet))[0],
     [filteredEntries]
   );
-  const podiumLapTimes = topLapTimes.slice(0, 3);
+  const podiumLapTimes = topLapTimes.slice(0, 5);
   const selectedTrackImage = getCircuitAsset(selectedTrack);
   const selectedTrackFlag = getCircuitFlagAsset(selectedTrack);
 
@@ -204,10 +204,12 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
                 aria-hidden="true"
               />
             ) : null}
-            {selectedTrack !== ALL_TRACKS && selectedTrackFlag ? (
-              <img className="stat-circuit-flag" src={selectedTrackFlag} alt="" aria-hidden="true" />
-            ) : null}
-            <p className="stat-value stat-value-small">{selectedTrack}</p>
+            <div className="stat-circuit-meta">
+              {selectedTrack !== ALL_TRACKS && selectedTrackFlag ? (
+                <img className="stat-circuit-flag" src={selectedTrackFlag} alt="" aria-hidden="true" />
+              ) : null}
+              <p className="stat-value stat-value-small">{selectedTrack}</p>
+            </div>
           </div>
         </article>
         <article className="stat-card">
@@ -255,6 +257,10 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
                   </span>
                   <span className="podium-driver">
                     <DriverName name={entry.driver_name} />
+                  </span>
+                  {entry.seat ? <span className="podium-seat">{entry.seat}</span> : <span className="podium-seat">-</span>}
+                  <span className="podium-setup">
+                    {entry.setup ? <SetupIndicator setup={entry.setup} /> : "-"}
                   </span>
                 </div>
               ))}
@@ -328,11 +334,13 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
           entries={topLapTimes}
           title={selectedTrack === ALL_TRACKS ? publicText.scoreboard.topLapsTitle : `Top 10 - ${selectedTrack}`}
           emptyMessage={publicText.scoreboard.emptyTopLaps}
+          showSetupIcon
         />
         <ScoreboardTable
           entries={recentLapTimes}
           title={selectedTrack === ALL_TRACKS ? publicText.scoreboard.latestEntriesTitle : `${publicText.scoreboard.latestEntriesTitle} - ${selectedTrack}`}
           emptyMessage={publicText.scoreboard.emptyLatestEntries}
+          showSeatOrSetupColumn={false}
         />
       </div>
 

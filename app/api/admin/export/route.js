@@ -1,5 +1,4 @@
 import { getLapTimesForExport } from "@/db/queries/lap-times";
-import { hasValidAdminSession } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -43,10 +42,6 @@ function buildCsv(rows) {
 }
 
 export async function GET(request) {
-  if (!hasValidAdminSession(request)) {
-    return new Response("Niet geautoriseerd", { status: 401 });
-  }
-
   try {
     const rows = await getLapTimesForExport();
     const csv = buildCsv(rows);
