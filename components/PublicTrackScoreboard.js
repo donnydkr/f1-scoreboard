@@ -180,8 +180,9 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
   return (
     <>
       <header className="hero">
+        <img className="hero-logo" src="/F1_logo.png" alt="F1 logo" />
         <div className="public-nav-actions">
-          <Link href="/admin" className="ghost-button">
+          <Link href="/invoerscherm" className="ghost-button">
             {adminText.page.openAdminPage}
           </Link>
         </div>

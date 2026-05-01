@@ -1,12 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { RecentLapTimesList } from "@/components/RecentLapTimesList";
 import { adminText } from "@/lib/admin-text";
 import { getCircuitAsset, getCircuitFlagAsset } from "@/lib/circuit-assets";
 import { formatLapTime } from "@/lib/time";
-
-const ALL_TRACKS = adminText.trackList.allCircuits;
 
 function sortByBestLap(entries) {
   return [...entries].sort((left, right) => {
@@ -21,18 +19,37 @@ function sortByBestLap(entries) {
 export function AdminTrackRecentList({ entries }) {
   const tracks = useMemo(() => {
     const uniqueTracks = [...new Set(entries.map((entry) => entry.track_name).filter(Boolean))];
-    return [ALL_TRACKS, ...uniqueTracks.sort((left, right) => left.localeCompare(right, "nl-NL"))];
+    return uniqueTracks.sort((left, right) => left.localeCompare(right, "nl-NL"));
   }, [entries]);
 
-  const [selectedTrack, setSelectedTrack] = useState(ALL_TRACKS);
+  const latestTrack = useMemo(() => {
+    const latestEntry = [...entries]
+      .filter((entry) => entry.track_name)
+      .sort((left, right) => new Date(right.created_at).getTime() - new Date(left.created_at).getTime())[0];
+
+    return latestEntry?.track_name || tracks[0] || "";
+  }, [entries, tracks]);
+
+  const [selectedTrack, setSelectedTrack] = useState(latestTrack);
 
   const filteredEntries = useMemo(() => {
-    if (selectedTrack === ALL_TRACKS) {
-      return entries;
+    if (!selectedTrack) {
+      return [];
     }
 
     return entries.filter((entry) => entry.track_name === selectedTrack);
   }, [entries, selectedTrack]);
+
+  useEffect(() => {
+    if (!selectedTrack && latestTrack) {
+      setSelectedTrack(latestTrack);
+      return;
+    }
+
+    if (selectedTrack && !tracks.includes(selectedTrack) && latestTrack) {
+      setSelectedTrack(latestTrack);
+    }
+  }, [latestTrack, selectedTrack, tracks]);
 
   const topEntries = useMemo(() => sortByBestLap(filteredEntries).slice(0, 5), [filteredEntries]);
   const bestLap = topEntries[0];
@@ -83,7 +100,9 @@ export function AdminTrackRecentList({ entries }) {
         })}
       </div>
 
-      <RecentLapTimesList entries={topEntries} emptyMessage={adminText.trackList.emptyMessage} />
+      <div className="admin-track-history">
+        <RecentLapTimesList entries={topEntries} emptyMessage={adminText.trackList.emptyMessage} />
+      </div>
     </div>
   );
 }
