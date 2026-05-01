@@ -114,10 +114,13 @@ textarea {
   top: 20px;
   right: 24px;
   z-index: 1;
-  width: clamp(120px, 14vw, 180px);
+  width: clamp(150px, 18vw, 220px);
   height: auto;
   object-fit: contain;
-  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.28));
+  filter:
+    brightness(0)
+    invert(1)
+    drop-shadow(0 12px 24px rgba(0, 0, 0, 0.28));
 }
 
 .eyebrow {
@@ -1909,7 +1912,7 @@ h2 {
   .hero-logo {
     top: 16px;
     right: 16px;
-    width: clamp(88px, 24vw, 132px);
+    width: clamp(110px, 28vw, 160px);
   }
 
   .hero > .eyebrow,
