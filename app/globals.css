@@ -1502,6 +1502,7 @@ h2 {
 .setup-option-button .setup-indicator {
   width: 1.25rem;
   height: 1.25rem;
+  color: inherit;
 }
 
 .seat-select {
@@ -1762,7 +1763,7 @@ h2 {
 
 .admin-database-toolbar {
   display: grid;
-  grid-template-columns: 1.3fr 0.7fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
 }
 

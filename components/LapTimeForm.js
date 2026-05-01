@@ -520,7 +520,7 @@ export function LapTimeForm({ initialDrivers = [] }) {
         </div>
 
         <div className="field">
-          <span>{adminText.lapForm.createDriver}</span>
+          <span>Vul een naam in</span>
           <div className="driver-builder-highlight">
             {isCreatingDriver ? (
               <div className="driver-builder-row driver-builder-row-stacked">
