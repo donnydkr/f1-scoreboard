@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState, useRef } from "react";
 import Link from "next/link";
+import { AdminGearLink } from "@/components/AdminGearLink";
 import { CircuitRecordCelebration } from "@/components/CircuitRecordCelebration";
 import { DriverName } from "@/components/DriverName";
 import { RainIndicator } from "@/components/RainIndicator";
@@ -182,9 +183,12 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
       <header className="hero">
         <img className="hero-logo" src="/F1_logo.png" alt="F1 logo" />
         <div className="public-nav-actions">
-          <Link href="/invoerscherm" className="ghost-button">
-            {adminText.page.openAdminPage}
-          </Link>
+          <div className="nav-action-group">
+            <Link href="/invoerscherm" className="ghost-button">
+              {adminText.page.openAdminPage}
+            </Link>
+          </div>
+          <AdminGearLink />
         </div>
         <p className="eyebrow">{publicText.page.eyebrow}</p>
         <h1>{publicText.page.title}</h1>
