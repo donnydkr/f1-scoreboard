@@ -3,10 +3,20 @@ import { AdminGearLink } from "@/components/AdminGearLink";
 import { AdminLogoutButton } from "@/components/AdminLogoutButton";
 import { adminText } from "@/lib/admin-text";
 
-export function AdminShell({ children, eyebrow, title, intro, showLogout = true, showAdminLink = false }) {
+export function AdminShell({
+  children,
+  eyebrow,
+  title,
+  intro,
+  showLogout = true,
+  showAdminLink = false,
+  variant = "default"
+}) {
+  const heroClassName = `hero${variant === "admin" ? " admin-hero" : ""}`;
+
   return (
     <main className="admin-shell">
-      <div className="hero admin-hero">
+      <div className={heroClassName}>
         <img className="hero-logo" src="/F1_logo.png" alt="F1 logo" />
         <div className="admin-nav-actions">
           <div className="nav-action-group">

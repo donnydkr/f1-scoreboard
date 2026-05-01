@@ -48,6 +48,7 @@ export default async function AdminPage() {
       eyebrow={adminText.shell.eyebrow}
       title={adminText.shell.title}
       intro={adminText.shell.intro}
+      variant="admin"
     >
       <div className="admin-page-stack">
         <section className="stats-grid admin-stats-grid">
