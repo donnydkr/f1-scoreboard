@@ -1,4 +1,6 @@
 import { getLapTimesForExport } from "@/db/queries/lap-times";
+import { isPasswordChangeRequired, isValidAdminSessionToken } from "@/lib/auth";
+import { ADMIN_SESSION_COOKIE } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -43,6 +45,16 @@ function buildCsv(rows) {
 
 export async function GET(request) {
   try {
+    const sessionToken = request.cookies.get(ADMIN_SESSION_COOKIE)?.value || "";
+
+    if (!isValidAdminSessionToken(sessionToken)) {
+      return new Response("Niet ingelogd.", { status: 401 });
+    }
+
+    if (await isPasswordChangeRequired()) {
+      return new Response("Wijzig eerst het standaard wachtwoord.", { status: 403 });
+    }
+
     const rows = await getLapTimesForExport();
     const csv = buildCsv(rows);
     const date = new Date().toISOString().slice(0, 10);

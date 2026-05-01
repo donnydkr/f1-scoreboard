@@ -247,3 +247,111 @@ export async function deleteLapTimeById(id) {
 
   return result.rows[0] || null;
 }
+
+export async function importLapTimes(rows, { replaceExisting = false } = {}) {
+  const pool = getPool();
+  const client = await pool.connect();
+
+  try {
+    await client.query("begin");
+
+    if (replaceExisting) {
+      await client.query("delete from lap_times");
+      await client.query("delete from drivers");
+    }
+
+    for (const row of rows) {
+      await client.query(
+        `
+          insert into lap_times (
+            id,
+            driver_name,
+            track_name,
+            car_name,
+            lap_time_display,
+            lap_time_ms,
+            setup,
+            seat,
+            is_wet,
+            session_date,
+            notes,
+            created_at
+          )
+          values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+          on conflict (id) do update
+            set driver_name = excluded.driver_name,
+                track_name = excluded.track_name,
+                car_name = excluded.car_name,
+                lap_time_display = excluded.lap_time_display,
+                lap_time_ms = excluded.lap_time_ms,
+                setup = excluded.setup,
+                seat = excluded.seat,
+                is_wet = excluded.is_wet,
+                session_date = excluded.session_date,
+                notes = excluded.notes,
+                created_at = excluded.created_at
+        `,
+        [
+          row.id,
+          row.driver_name,
+          row.track_name,
+          row.car_name,
+          row.lap_time_display,
+          row.lap_time_ms,
+          row.setup,
+          row.seat,
+          row.is_wet,
+          row.session_date,
+          row.notes,
+          row.created_at
+        ]
+      );
+    }
+
+    const driverNames = [...new Set(rows.map((row) => row.driver_name).filter(Boolean))];
+
+    for (const driverName of driverNames) {
+      await client.query(
+        `
+          insert into drivers (name)
+          values ($1)
+          on conflict (name) do nothing
+        `,
+        [driverName]
+      );
+    }
+
+    await client.query(
+      `
+        select setval(
+          pg_get_serial_sequence('lap_times', 'id'),
+          coalesce((select max(id) from lap_times), 1),
+          (select exists(select 1 from lap_times))
+        )
+      `
+    );
+
+    await client.query(
+      `
+        select setval(
+          pg_get_serial_sequence('drivers', 'id'),
+          coalesce((select max(id) from drivers), 1),
+          (select exists(select 1 from drivers))
+        )
+      `
+    );
+
+    await client.query("commit");
+
+    return {
+      importedCount: rows.length,
+      driverCount: driverNames.length,
+      replacedExisting: replaceExisting
+    };
+  } catch (error) {
+    await client.query("rollback");
+    throw error;
+  } finally {
+    client.release();
+  }
+}

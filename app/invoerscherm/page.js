@@ -22,7 +22,13 @@ export default async function InvoerschermPage() {
   }
 
   return (
-    <AdminShell>
+    <AdminShell
+      eyebrow={adminText.inputShell.eyebrow}
+      title={adminText.inputShell.title}
+      intro={adminText.inputShell.intro}
+      showAdminLink
+      showLogout={false}
+    >
       <div className="admin-grid">
         <section className="panel">
           <div className="panel-header">

@@ -1,23 +1,26 @@
 import Link from "next/link";
+import { AdminGearLink } from "@/components/AdminGearLink";
+import { AdminLogoutButton } from "@/components/AdminLogoutButton";
 import { adminText } from "@/lib/admin-text";
 
-export function AdminShell({ children }) {
+export function AdminShell({ children, eyebrow, title, intro, showLogout = true, showAdminLink = false }) {
   return (
     <main className="admin-shell">
       <div className="hero admin-hero">
         <img className="hero-logo" src="/F1_logo.png" alt="F1 logo" />
         <div className="admin-nav-actions">
-          <Link href="/public" className="ghost-button">
-            {adminText.page.openPublicScoreboard}
-          </Link>
-          <a href="/api/admin/export" className="ghost-button" download="f1-scoreboard-export.csv">
-            Export CSV
-          </a>
+          <div className="nav-action-group">
+            <Link href="/public" className="ghost-button">
+              {adminText.page.openPublicScoreboard}
+            </Link>
+            {showLogout ? <AdminLogoutButton /> : null}
+          </div>
+          {showAdminLink ? <AdminGearLink /> : null}
         </div>
-        <p className="eyebrow admin-eyebrow">{adminText.shell.eyebrow}</p>
-        <h1>{adminText.shell.title}</h1>
-        {adminText.shell.intro ? (
-          <p className="hero-copy">{adminText.shell.intro}</p>
+        <p className="eyebrow admin-eyebrow">{eyebrow || adminText.shell.eyebrow}</p>
+        <h1>{title || adminText.shell.title}</h1>
+        {(intro || adminText.shell.intro) ? (
+          <p className="hero-copy">{intro || adminText.shell.intro}</p>
         ) : null}
       </div>
       {children}
