@@ -1,43 +1,43 @@
 # f1-scoreboard
 
-Een simpele webapplicatie om rondetijden van simracing-sessies bij te houden en te vergelijken op een publiek scoreboard.
+A simple web app for tracking and comparing sim racing lap times on a public scoreboard.
 
 ## Features
-- **Publiek Scoreboard:** Overzicht van de snelste tijden per circuit.
-- **Admin Paneel:** Beveiligde omgeving (`/admin`) voor het beheren van coureurs en tijden.
-- **Automatische Migraties:** Database-schema's worden automatisch bijgewerkt via Docker.
-- **Responsive Design:** Werkt zowel op desktop als mobiel tijdens het rijden.
+- **Public Scoreboard:** Overview of the fastest times per circuit.
+- **Admin Panel:** Secured area (`/admin`) for managing drivers and lap times.
+- **Automatic Migrations:** Database schemas are updated automatically through Docker.
+- **Responsive Design:** Works on both desktop and mobile while you are on track.
 
-## Structuur
-- `app/`: Next.js App Router pagina's en API-routes
-- `components/`: React componenten.
-- `db/`: Database logica (queries en SQL-migraties).
-- `lib/`: Utilities voor auth, database connecties en formatting.
-- `public/circuits/`: Assets zoals circuit-outlines en vlaggen.
-- `docs/`: Diepgaande documentatie over de architectuur.
+## Structure
+- `app/`: Next.js App Router pages and API routes
+- `components/`: React components
+- `db/`: Database logic, queries, and SQL migrations
+- `lib/`: Utilities for auth, database connections, and formatting
+- `public/circuits/`: Assets such as circuit outlines and flags
+- `docs/`: In-depth documentation about the architecture
 
-## Documentatie
-Zie de `docs/` map voor meer details:
-- Repo Overview: Architectuur en mappenstructuur.
-- Architecture & Dataflow: Hoe data door de app stroomt.
-- Change Guide: Checklist voor het toevoegen van nieuwe features.
+## Documentation
+See the `docs/` folder for more details:
+- Repo Overview: Architecture and folder structure
+- Architecture & Dataflow: How data moves through the app
+- Change Guide: Checklist for adding new features
 
-## Starten
+## Getting Started
 
-### Authenticatie & Setup
-De omgeving draait volledig in Docker met hot-reloading via een override file.
+### Authentication & Setup
+The environment runs fully in Docker with hot reloading through an override file.
 
-1. **Git Auth:** Gebruik bij voorkeur SSH. Voor 1Password gebruikers, voeg dit toe aan `~/.ssh/config`:
+1. **Git Auth:** SSH is recommended. For 1Password users, add this to `~/.ssh/config`:
    ```ssh
    Host *
      IdentityAgent "~/Library/Group Containers/2BU8B4S4NG.com.1password/t/agent.sock"
    ```
-   Update daarna je remote:
+   Then update your remote:
    ```bash
-   git remote set-url origin git@github.com:jouw-user/f1-scoreboard.git
+   git remote set-url origin git@github.com:your-user/f1-scoreboard.git
    ```
-2. **Omgeving:** Kopieer `.env.example` naar `.env` en vul de variabelen in.
-3. **Docker:** Start de containers:
+2. **Environment:** Copy `.env.example` to `.env` and fill in the variables.
+3. **Docker:** Start the containers:
 
 ```bash
 docker compose up -d --build
@@ -45,51 +45,53 @@ docker compose up -d --build
 
 5. Open:
 
-- publiek scoreboard: `http://localhost:3000`
+- public scoreboard: `http://localhost:3000`
 - admin login: `http://localhost:3000/admin/login`
 
-## Eerste run op een andere pc of VPS
+## First Run on Another PC or VPS
 
-Als de database nog leeg is, hoef je geen losse migratiecommando's te draaien.
-De Postgres-container voert de SQL-bestanden uit `db/migrations/` automatisch uit bij de eerste start van een nieuwe database-volume.
+If the database is still empty, you do not need to run separate migration commands.
+The Postgres container automatically executes the SQL files in `db/migrations/` when a new database volume starts for the first time.
 
-Schone testflow:
+Clean test flow:
 
-1. clone de repo
-2. maak `.env` op basis van `.env.example`
-3. zet veilige waarden in `.env`
-4. start met `docker compose up -d --build`
+1. clone the repo
+2. create `.env` based on `.env.example`
+3. set safe values in `.env`
+4. start with `docker compose up -d --build`
 
-Als je opnieuw helemaal schoon wilt testen met een lege database:
+If you want to test from scratch again with an empty database:
 
 ```powershell
 docker compose down -v
 docker compose up -d --build
 ```
 
-`docker compose down -v` verwijdert ook de Postgres-volume, dus alle data gaat dan weg.
+`docker compose down -v` also removes the Postgres volume, so all data will be deleted.
 
-## Production notes
+## Production Notes
 
-Voor productie of een VPS:
+For production or a VPS:
 
-- zet `APP_URL` op je echte URL, bijvoorbeeld `https://jouwdomein.nl`
-- gebruik sterke, unieke waarden voor `POSTGRES_PASSWORD`, `ADMIN_ACCESS_CODE` en `ADMIN_SESSION_TOKEN`
-- publiceer alleen de poorten die je echt nodig hebt
-- gebruik bij voorkeur een reverse proxy met HTTPS voor publiek verkeer
+- set `APP_URL` to your real URL, for example `https://yourdomain.com`
+- use strong, unique values for `POSTGRES_PASSWORD`, `ADMIN_ACCESS_CODE`, and `ADMIN_SESSION_TOKEN`
+- only expose the ports you actually need
+- preferably use a reverse proxy with HTTPS for public traffic
 
-## Admin en publiek gescheiden
+## Admin and Public Separation
 
-De publieke scoreboard-pagina toont alleen tijden.
-De admin-route is apart afgeschermd met een access code uit `.env`.
-De invoer-API accepteert alleen requests met een geldige admin-sessiecookie.
+The public scoreboard page only shows lap times.
+The admin route is separately protected with an access code from `.env`.
+The input API only accepts requests with a valid admin session cookie.
 
-Dat is bewust simpel gehouden zodat je zonder zware auth-setup kunt starten. Later kunnen we dit uitbreiden naar echte gebruikersaccounts.
+This is intentionally kept simple so you can get started without a heavy auth setup.
+Later we can expand this to proper user accounts.
 
-## Eerste databasis-opzet
+## Initial Database Setup
 
-De app slaat tijden nu op in een enkele tabel `lap_times`.
-Dat houdt de eerste versie overzichtelijk. Later kunnen we dit normaliseren naar bijvoorbeeld:
+The app currently stores times in a single `lap_times` table.
+That keeps the first version clean and easy to understand.
+Later we can normalize it into something like:
 
 - `drivers`
 - `tracks`
@@ -97,21 +99,21 @@ Dat houdt de eerste versie overzichtelijk. Later kunnen we dit normaliseren naar
 - `sessions`
 - `lap_times`
 
-## Bronnen
+## Sources
 
-Voor de frameworkkeuze heb ik me gebaseerd op de actuele officiele Next.js-installatiedocs en pakketinformatie:
+For the framework choice, I based this on the current official Next.js installation docs and package information:
 
 - https://nextjs.org/docs/app/getting-started/installation
 - https://nextjs.org/docs/app/getting-started/upgrading
 - https://www.npmjs.com/package/next
 - https://www.npmjs.com/package/pg
 
-## Repo-klaar voor GitHub
+## Ready for GitHub
 
-Voor een schone repository commit je in ieder geval niet mee:
+For a clean repository, do not commit:
 
 - `.next/`
 - `node_modules/`
 - `.env`
 
-Die lokale bestanden worden nu afgevangen via `.gitignore`.
+Those local files are already covered by `.gitignore`.
