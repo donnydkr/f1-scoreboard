@@ -489,7 +489,7 @@ h2 {
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.45fr);
   gap: 14px;
   margin-bottom: 20px;
 }
@@ -632,6 +632,27 @@ h2 {
   font-family: var(--font-display);
   font-size: clamp(1.5rem, 5vw, 2.8rem);
   text-shadow: 0 0 18px rgba(var(--accent-rgb), 0.16);
+}
+
+.fastest-lap-value {
+  display: grid;
+  gap: 8px;
+}
+
+.fastest-lap-driver {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.22rem;
+  font-weight: 800;
+  line-height: 1.15;
+}
+
+.fastest-lap-by {
+  color: var(--muted);
+  font-size: 0.86em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .stat-value-small {
