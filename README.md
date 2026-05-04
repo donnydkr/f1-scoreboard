@@ -24,20 +24,11 @@ See the `docs/` folder for more details:
 
 ## Getting Started
 
-### Authentication & Setup
+### Setup
 The environment runs fully in Docker with hot reloading through an override file.
 
-1. **Git Auth:** SSH is recommended. For 1Password users, add this to `~/.ssh/config`:
-   ```ssh
-   Host *
-     IdentityAgent "~/Library/Group Containers/2BU8B4S4NG.com.1password/t/agent.sock"
-   ```
-   Then update your remote:
-   ```bash
-   git remote set-url origin git@github.com:your-user/f1-scoreboard.git
-   ```
-2. **Environment:** Copy `.env.example` to `.env` and fill in the variables.
-3. **Docker:** Start the containers:
+1. **Environment:** Copy `.env.example` to `.env` and fill in the variables.
+2. **Docker:** Start the containers:
 
 ```bash
 docker compose up -d --build
@@ -80,8 +71,8 @@ For production or a VPS:
 
 ## Admin and Public Separation
 
-The public scoreboard page only shows lap times.
-The admin route is separately protected with an access code from `.env`.
+The public scoreboard page only shows lap times and may be accessed with /scoreboard
+The admin route is separately protected with a password, first time login is admin:admin and may be accessed with /admin
 The input API only accepts requests with a valid admin session cookie.
 
 This is intentionally kept simple so you can get started without a heavy auth setup.
@@ -107,13 +98,3 @@ For the framework choice, I based this on the current official Next.js installat
 - https://nextjs.org/docs/app/getting-started/upgrading
 - https://www.npmjs.com/package/next
 - https://www.npmjs.com/package/pg
-
-## Ready for GitHub
-
-For a clean repository, do not commit:
-
-- `.next/`
-- `node_modules/`
-- `.env`
-
-Those local files are already covered by `.gitignore`.
