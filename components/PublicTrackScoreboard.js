@@ -55,6 +55,114 @@ function getBestLapByTrack(entries) {
   return bestByTrack;
 }
 
+function SeatWheelIcon() {
+  return (
+    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M8.5 12h7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M12 8.5v7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M9.5 9.5l1.8 2.5L9.5 15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M14.5 9.5l-1.8 2.5L14.5 15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function TrackStatsBlock({ trackName, entries, selectedTrack = null }) {
+  const filteredEntries = entries.filter((entry) => entry.track_name === trackName);
+  const topLapTimes = sortByBestLap(filteredEntries).slice(0, 10);
+  const bestLap = topLapTimes[0];
+  const podiumLapTimes = topLapTimes.slice(0, 5);
+  const selectedTrackImage = getCircuitAsset(trackName);
+  const selectedTrackFlag = getCircuitFlagAsset(trackName);
+
+  return (
+    <section className="track-dashboard-section">
+      <div className="stats-grid">
+        <article className="stat-card">
+          <p className="stat-label">{publicText.scoreboard.selectedCircuitLabel}</p>
+          <div className={selectedTrackImage ? "stat-circuit" : "stat-circuit stat-circuit-centered"}>
+            {selectedTrackImage ? (
+              <img
+                className="stat-circuit-image"
+                src={selectedTrackImage}
+                alt=""
+                aria-hidden="true"
+              />
+            ) : null}
+            <div className="stat-circuit-meta">
+              {selectedTrackFlag ? (
+                <img className="stat-circuit-flag" src={selectedTrackFlag} alt="" aria-hidden="true" />
+              ) : null}
+              <p className="stat-value stat-value-small">{trackName}</p>
+            </div>
+          </div>
+        </article>
+        <article className="stat-card">
+          <p className="stat-label">{publicText.scoreboard.fastestLapLabel}</p>
+          <div className="stat-driver-stack">
+            <p className="stat-value">
+              {bestLap ? (
+                <span className="fastest-lap-value">
+                  <span className="lap-value-content">
+                    <span>{formatLapTime(bestLap.lap_time_ms)}</span>
+                    <RainIndicator isWet={bestLap.is_wet} size="large" />
+                  </span>
+                  <span className="fastest-lap-driver">
+                    <DriverName name={bestLap.driver_name} />
+                  </span>
+                </span>
+              ) : (
+                "--:--.---"
+              )}
+            </p>
+            {bestLap?.setup && (
+              <div className="setup-display">
+                <SetupIndicator setup={bestLap.setup} size="large" />
+                <p className="stat-secondary-label">{bestLap.setup}</p>
+              </div>
+            )}
+            {bestLap?.seat && (
+              <div className="seat-display">
+                <span className="seat-display-icon" aria-hidden="true">
+                  <SeatWheelIcon />
+                </span>
+                <p className="stat-secondary-label">{bestLap.seat}</p>
+              </div>
+            )}
+          </div>
+        </article>
+        <article className="stat-card">
+          <p className="stat-label">{publicText.scoreboard.topThreeLabel}</p>
+          {podiumLapTimes.length === 0 ? (
+            <p className="stat-value">-</p>
+          ) : (
+            <div className="podium-list">
+              {podiumLapTimes.map((entry, index) => (
+                <div key={entry.id} className="podium-item">
+                  <span className="podium-rank">{index + 1}</span>
+                  <span className="podium-lap">
+                    <span className="lap-value-content">
+                      <span>{formatLapTime(entry.lap_time_ms)}</span>
+                      <RainIndicator isWet={entry.is_wet} size="large" />
+                    </span>
+                  </span>
+                  <span className="podium-driver">
+                    <DriverName name={entry.driver_name} />
+                  </span>
+                  {entry.seat ? <span className="podium-seat">{entry.seat}</span> : <span className="podium-seat">-</span>}
+                  <span className="podium-setup">
+                    {entry.setup ? <SetupIndicator setup={entry.setup} /> : "-"}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </article>
+      </div>
+    </section>
+  );
+}
+
 export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) {
   const tracks = useMemo(() => {
     const uniqueTracks = [...new Set(entries.map((entry) => entry.track_name).filter(Boolean))];
@@ -169,10 +277,10 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
 
   const topLapTimes = useMemo(() => sortByBestLap(filteredEntries).slice(0, 10), [filteredEntries]);
   const recentLapTimes = useMemo(() => sortByRecent(filteredEntries).slice(0, 8), [filteredEntries]);
-  const bestLap = topLapTimes[0];
-  const podiumLapTimes = topLapTimes.slice(0, 5);
-  const selectedTrackImage = getCircuitAsset(selectedTrack);
-  const selectedTrackFlag = getCircuitFlagAsset(selectedTrack);
+  const visibleTracks = useMemo(
+    () => tracks.filter((track) => track !== ALL_TRACKS),
+    [tracks]
+  );
 
   return (
     <>
@@ -193,88 +301,15 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
         )}
       </header>
 
-      <section className="stats-grid">
-        <article className="stat-card">
-          <p className="stat-label">{publicText.scoreboard.selectedCircuitLabel}</p>
-          <div className={selectedTrack !== ALL_TRACKS && selectedTrackImage ? "stat-circuit" : "stat-circuit stat-circuit-centered"}>
-            {selectedTrack !== ALL_TRACKS && selectedTrackImage ? (
-              <img
-                className="stat-circuit-image"
-                src={selectedTrackImage}
-                alt=""
-                aria-hidden="true"
-              />
-            ) : null}
-            <div className="stat-circuit-meta">
-              {selectedTrack !== ALL_TRACKS && selectedTrackFlag ? (
-                <img className="stat-circuit-flag" src={selectedTrackFlag} alt="" aria-hidden="true" />
-              ) : null}
-              <p className="stat-value stat-value-small">{selectedTrack}</p>
-            </div>
-          </div>
-        </article>
-        <article className="stat-card">
-          <p className="stat-label">{publicText.scoreboard.fastestLapLabel}</p>
-          <div className="stat-driver-stack">
-            <p className="stat-value">
-              {bestLap ? (
-                <span className="fastest-lap-value">
-                  <span className="lap-value-content">
-                    <span>{formatLapTime(bestLap.lap_time_ms)}</span>
-                    <RainIndicator isWet={bestLap.is_wet} size="large" />
-                  </span>
-                  <span className="fastest-lap-driver">
-                    <span className="fastest-lap-by">{publicText.scoreboard.byLabel}</span>
-                    <DriverName name={bestLap.driver_name} />
-                  </span>
-                </span>
-              ) : (
-                "--:--.---"
-              )}
-            </p>
-            {bestLap?.setup && (
-              <div className="setup-display">
-                <SetupIndicator setup={bestLap.setup} size="large" />
-                <p className="stat-secondary-label">{bestLap.setup}</p>
-              </div>
-            )}
-            {bestLap?.seat && (
-              <div className="seat-display">
-                <p className="stat-secondary-label">{bestLap.seat}</p>
-              </div>
-            )}
-          </div>
-        </article>
-        <article className="stat-card">
-          <p className="stat-label">{publicText.scoreboard.topThreeLabel}</p>
-          {selectedTrack === ALL_TRACKS ? (
-            <p className="stat-value">-</p>
-          ) : podiumLapTimes.length === 0 ? (
-            <p className="stat-value">-</p>
-          ) : (
-            <div className="podium-list">
-              {podiumLapTimes.map((entry, index) => (
-                <div key={entry.id} className="podium-item">
-                  <span className="podium-rank">{index + 1}</span>
-                  <span className="podium-lap">
-                    <span className="lap-value-content">
-                      <span>{formatLapTime(entry.lap_time_ms)}</span>
-                      <RainIndicator isWet={entry.is_wet} size="large" />
-                    </span>
-                  </span>
-                  <span className="podium-driver">
-                    <DriverName name={entry.driver_name} />
-                  </span>
-                  {entry.seat ? <span className="podium-seat">{entry.seat}</span> : <span className="podium-seat">-</span>}
-                  <span className="podium-setup">
-                    {entry.setup ? <SetupIndicator setup={entry.setup} /> : "-"}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </article>
-      </section>
+      {selectedTrack === ALL_TRACKS ? (
+        <div className="track-dashboard-stack">
+          {visibleTracks.map((track) => (
+            <TrackStatsBlock key={track} trackName={track} entries={entries} selectedTrack={selectedTrack} />
+          ))}
+        </div>
+      ) : (
+        <TrackStatsBlock trackName={selectedTrack} entries={entries} selectedTrack={selectedTrack} />
+      )}
 
       <section className="track-filter-panel">
         <div className="track-filter-header">
@@ -324,7 +359,11 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
         />
         <ScoreboardTable
           entries={recentLapTimes}
-          title={selectedTrack === ALL_TRACKS ? publicText.scoreboard.latestEntriesTitle : `${publicText.scoreboard.latestEntriesTitle} - ${selectedTrack}`}
+          title={
+            selectedTrack === ALL_TRACKS
+              ? publicText.scoreboard.latestEntriesTitle
+              : `${publicText.scoreboard.latestEntriesTitle} - ${selectedTrack}`
+          }
           emptyMessage={publicText.scoreboard.emptyLatestEntries}
           showSeatOrSetupColumn={false}
         />
