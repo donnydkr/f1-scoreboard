@@ -13,7 +13,6 @@ const initialState = {
   driverName: "",
   trackName: "",
   lapTime: "",
-  sessionDate: new Date().toISOString().slice(0, 10),
   isWet: false,
   setup: "Balanced",
   seat: "Stoel 1"
@@ -364,10 +363,7 @@ export function LapTimeForm({ initialDrivers = [] }) {
       return;
     }
 
-    setValues({
-      ...initialState,
-      sessionDate: values.sessionDate || initialState.sessionDate
-    });
+    setValues({ ...initialState });
     if (payload?.isCircuitRecord && payload?.data) {
       setCelebrationRecord({
         trackName: payload.data.track_name,
@@ -664,10 +660,6 @@ export function LapTimeForm({ initialDrivers = [] }) {
           </div>
         </label>
 
-        <label className="field">
-          <span>{adminText.lapForm.sessionDateLabel}</span>
-          <input type="date" name="sessionDate" value={values.sessionDate} onChange={updateValue} required />
-        </label>
       </div>
       {error ? <p className="form-error">{error}</p> : null}
       {feedback ? <p className="form-success">{feedback}</p> : null}

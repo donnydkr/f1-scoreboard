@@ -83,6 +83,55 @@ export function AdminDatabaseManager({ entries }) {
     });
   }
 
+  async function handleRenameDriver(entry) {
+    const nextName = window.prompt(adminText.database.renameDriverPrompt, entry.driver_name || "")?.trim() || "";
+
+    if (!nextName) {
+      return;
+    }
+
+    if (nextName === entry.driver_name) {
+      setFeedback(adminText.api.driverRenameNoChange);
+      return;
+    }
+
+    setError("");
+    setFeedback("");
+    setPendingId(entry.driver_name);
+
+    const response = await fetch("/api/drivers", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        currentName: entry.driver_name,
+        newName: nextName
+      })
+    });
+
+    const payload = await readJsonSafely(response);
+
+    if (!response.ok) {
+      setPendingId(null);
+      setError(payload?.error || adminText.api.driverRenameServerError);
+      return;
+    }
+
+    setPendingId(null);
+    setFeedback(
+      payload?.renamed
+        ? payload?.updatedLapTimeCount > 0
+          ? `${adminText.api.driverRenamed} ${payload.updatedLapTimeCount} tijden bijgewerkt.`
+          : adminText.api.driverRenamed
+        : adminText.api.driverRenameNoChange
+    );
+
+    startTransition(() => {
+      router.refresh();
+    });
+  }
+
   return (
     <div className="admin-database-panel">
       <div className="admin-database-toolbar">
@@ -163,6 +212,7 @@ export function AdminDatabaseManager({ entries }) {
             <tbody>
               {filteredEntries.map((entry) => {
                 const deletingThisEntry = pendingId === entry.id;
+                const renamingThisDriver = pendingId === entry.driver_name;
 
                 return (
                   <tr key={entry.id}>
@@ -183,10 +233,18 @@ export function AdminDatabaseManager({ entries }) {
                     <td>{formatDate(entry.created_at)}</td>
                     <td className="admin-record-actions-cell">
                       <button
+                        className="ghost-button compact-button admin-record-edit-button"
+                        type="button"
+                        onClick={() => handleRenameDriver(entry)}
+                        disabled={deletingThisEntry || renamingThisDriver || isPending}
+                      >
+                        {pendingId === entry.driver_name ? adminText.database.saving : adminText.database.editDriver}
+                      </button>
+                      <button
                         className="danger-button admin-record-delete-button"
                         type="button"
                         onClick={() => handleDelete(entry.id)}
-                        disabled={deletingThisEntry || isPending}
+                        disabled={deletingThisEntry || renamingThisDriver || isPending}
                       >
                         {deletingThisEntry ? adminText.database.deleting : adminText.database.delete}
                       </button>

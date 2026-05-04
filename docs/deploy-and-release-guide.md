@@ -49,7 +49,6 @@ POSTGRES_DB=f1_scoreboard
 POSTGRES_USER=f1_scoreboard
 POSTGRES_PASSWORD=kies-een-sterk-wachtwoord
 APP_URL=http://localhost:3000
-ADMIN_ACCESS_CODE=kies-een-code
 ADMIN_SESSION_TOKEN=kies-een-lange-random-string
 ```
 

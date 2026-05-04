@@ -114,7 +114,6 @@ Zie `.env.example` voor de basisinstellingen:
 - `POSTGRES_USER`
 - `POSTGRES_PASSWORD`
 - `APP_URL`
-- `ADMIN_ACCESS_CODE`
 - `ADMIN_SESSION_TOKEN`
 
 ## Hoe dit document later handig is

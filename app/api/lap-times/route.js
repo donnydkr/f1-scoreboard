@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { setAppSetting } from "@/db/queries/app-settings";
 import { createLapTime } from "@/db/queries/lap-times";
 import { adminText } from "@/lib/admin-text";
-import { isLapTimeInAllowedRange, parseLapTimeToMs } from "@/lib/time";
+import { getAmsterdamDateString, isLapTimeInAllowedRange, parseLapTimeToMs } from "@/lib/time";
 
 function requireText(value) {
   if (typeof value !== "string") {
@@ -23,7 +23,7 @@ export async function POST(request) {
     const driverName = requireText(body?.driverName);
     const trackName = requireText(body?.trackName);
     const lapTimeDisplay = requireText(body?.lapTime);
-    const sessionDate = requireText(body?.sessionDate);
+    const sessionDate = requireText(body?.sessionDate) || getAmsterdamDateString();
     const setup = requireText(body?.setup) || "Balanced";
     const isWet = parseBoolean(body?.isWet);
     const seat = requireText(body?.seat) || requireText(body?.selectedSeat);

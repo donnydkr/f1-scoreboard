@@ -11,6 +11,7 @@ De app gebruikt een bewust compact PostgreSQL-model. Coureurs zitten in een eige
 - `created_at`
 
 `name` is uniek. Bij het verwijderen van een coureur verwijdert de app ook alle rondetijden met dezelfde `driver_name`.
+Bij het wijzigen van een coureurnaam werkt de app ook alle bestaande `lap_times.driver_name`-waarden bij naar de nieuwe naam.
 
 ### `lap_times`
 

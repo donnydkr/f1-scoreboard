@@ -65,7 +65,7 @@ docker compose up -d --build
 For production or a VPS:
 
 - set `APP_URL` to your real URL, for example `https://yourdomain.com`
-- use strong, unique values for `POSTGRES_PASSWORD`, `ADMIN_ACCESS_CODE`, and `ADMIN_SESSION_TOKEN`
+- use strong, unique values for `POSTGRES_PASSWORD` and `ADMIN_SESSION_TOKEN`
 - only expose the ports you actually need
 - preferably use a reverse proxy with HTTPS for public traffic
 

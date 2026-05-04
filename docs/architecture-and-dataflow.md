@@ -35,8 +35,8 @@ Daardoor worden de pagina's niet statisch gecached en blijven database-updates z
 2. `middleware.js` controleert of het pad onder `/admin` valt
 3. Als het geen `/admin/login` is, wordt `hasValidAdminSession()` gebruikt
 4. Zonder geldige cookie volgt redirect naar `/admin/login`
-5. `AdminLoginForm` stuurt de access code naar `POST /api/auth/login`
-6. De login-route vergelijkt deze met `ADMIN_ACCESS_CODE`
+5. `AdminLoginForm` stuurt de admin-gebruikersnaam en het wachtwoord naar `POST /api/auth/login`
+6. De login-route vergelijkt die met de opgeslagen admin-inloggegevens
 7. Bij succes wordt een cookie gezet met `ADMIN_SESSION_TOKEN`
 8. Daarna kan `/admin` worden bezocht
 

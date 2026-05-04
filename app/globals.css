@@ -1962,6 +1962,12 @@ h2 {
   font-size: 0.78rem;
 }
 
+.admin-record-edit-button {
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 0.78rem;
+}
+
 .admin-page-footer {
   display: flex;
   justify-content: space-between;
