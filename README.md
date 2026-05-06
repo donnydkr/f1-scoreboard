@@ -75,9 +75,6 @@ The public scoreboard page only shows lap times and may be accessed with /scoreb
 The admin route is separately protected with a password, first time login is admin:admin and may be accessed with /admin
 The input API only accepts requests with a valid admin session cookie.
 
-This is intentionally kept simple so you can get started without a heavy auth setup.
-Later we can expand this to proper user accounts.
-
 ## Initial Database Setup
 
 The app currently stores times in a single `lap_times` table.
