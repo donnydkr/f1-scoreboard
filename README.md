@@ -73,6 +73,7 @@ For production or a VPS:
 
 The public scoreboard page only shows lap times and may be accessed with /scoreboard
 The admin route is separately protected with a password, first time login is admin:admin and may be accessed with /admin
+The form page is used to enter lap times with track names and setups and may be accessed with /dashboard
 The input API only accepts requests with a valid admin session cookie.
 
 ## Initial Database Setup
