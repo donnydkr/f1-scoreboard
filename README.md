@@ -25,7 +25,7 @@ See the `docs/` folder for more details:
 ## Getting Started
 
 ### Setup
-The environment runs fully in Docker with hot reloading through an override file.
+The environment runs fully in Docker
 
 1. **Environment:** Copy `.env.example` to `.env` and fill in the variables.
 2. **Docker:** Start the containers:
@@ -75,18 +75,6 @@ The public scoreboard page only shows lap times and may be accessed with /scoreb
 The admin route is separately protected with a password, first time login is admin:admin and may be accessed with /admin
 The form page is used to enter lap times with track names and setups and may be accessed with /dashboard
 The input API only accepts requests with a valid admin session cookie.
-
-## Initial Database Setup
-
-The app currently stores times in a single `lap_times` table.
-That keeps the first version clean and easy to understand.
-Later we can normalize it into something like:
-
-- `drivers`
-- `tracks`
-- `cars`
-- `sessions`
-- `lap_times`
 
 ## Sources
 
