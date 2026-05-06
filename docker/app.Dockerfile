@@ -29,6 +29,7 @@ COPY --from=builder /app/app ./app
 COPY --from=builder /app/components ./components
 COPY --from=builder /app/lib ./lib
 COPY --from=builder /app/db ./db
+COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/middleware.js ./middleware.js
 COPY --from=builder /app/next.config.mjs ./next.config.mjs
 COPY --from=builder /app/jsconfig.json ./jsconfig.json

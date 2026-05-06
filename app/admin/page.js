@@ -1,13 +1,16 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import packageJson from "../../package.json";
-import { AdminDatabaseManager } from "@/components/AdminDatabaseManager";
 import { AdminShell } from "@/components/AdminShell";
 import { getAllLapTimes } from "@/db/queries/lap-times";
+import { getTelemetryStats } from "@/db/queries/telemetry";
 import { adminText } from "@/lib/admin-text";
 import { canUseProtectedAdminArea } from "@/lib/auth";
+import { ensureTelemetryReceiverStarted } from "@/lib/telemetry-receiver";
 import { formatDate } from "@/lib/time";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 function buildAdminStats(entries) {
   const drivers = new Set(entries.map((entry) => entry.driver_name).filter(Boolean));
@@ -33,12 +36,27 @@ export default async function AdminPage() {
     redirect("/admin/password");
   }
 
+  ensureTelemetryReceiverStarted();
+
   let lapTimes = [];
+  let telemetryStats = {
+    totalPackets: 0,
+    totalLapEvents: 0
+  };
 
   try {
     lapTimes = await getAllLapTimes();
   } catch {
     lapTimes = [];
+  }
+
+  try {
+    telemetryStats = await getTelemetryStats();
+  } catch {
+    telemetryStats = {
+      totalPackets: 0,
+      totalLapEvents: 0
+    };
   }
 
   const stats = buildAdminStats(lapTimes);
@@ -78,7 +96,53 @@ export default async function AdminPage() {
             <p className="subtle">{adminText.adminPage.databaseIntro}</p>
           </div>
           <div className="panel-body admin-panel-body">
-            <AdminDatabaseManager entries={lapTimes} />
+            <div className="admin-telemetry-summary-card">
+              <div className="admin-telemetry-summary-grid">
+                <article className="mini-item">
+                  <div className="mini-item-row">
+                    <strong>{stats.totalRecords}</strong>
+                    <span className="subtle">{adminText.adminPage.recordsLabel}</span>
+                  </div>
+                </article>
+                <article className="mini-item">
+                  <div className="mini-item-row">
+                    <strong>{stats.totalDrivers}</strong>
+                    <span className="subtle">{adminText.adminPage.driversLabel}</span>
+                  </div>
+                </article>
+              </div>
+              <Link href="/admin/records" className="ghost-button">
+                {adminText.adminPage.recordsOpenButton}
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        <section className="panel admin-panel">
+          <div className="panel-header admin-panel-header">
+            <h2>{adminText.adminPage.telemetryTitle}</h2>
+            <p className="subtle">{adminText.adminPage.telemetryIntro}</p>
+          </div>
+          <div className="panel-body admin-panel-body">
+            <div className="admin-telemetry-summary-card">
+              <div className="admin-telemetry-summary-grid">
+                <article className="mini-item">
+                  <div className="mini-item-row">
+                    <strong>{telemetryStats.totalPackets}</strong>
+                    <span className="subtle">{adminText.adminPage.telemetryPacketsLabel}</span>
+                  </div>
+                </article>
+                <article className="mini-item">
+                  <div className="mini-item-row">
+                    <strong>{telemetryStats.totalLapEvents}</strong>
+                    <span className="subtle">{adminText.adminPage.telemetryLapsLabel}</span>
+                  </div>
+                </article>
+              </div>
+              <Link href="/admin/telemetry" className="ghost-button">
+                {adminText.adminPage.telemetryOpenButton}
+              </Link>
+            </div>
           </div>
         </section>
 

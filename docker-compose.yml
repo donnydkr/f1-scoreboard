@@ -14,10 +14,25 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       DATABASE_HOST: db
       DATABASE_PORT: 5432
+      TELEMETRY_DATABASE_HOST: telemetry-db
+      TELEMETRY_DATABASE_PORT: 5432
+      TELEMETRY_POSTGRES_DB: ${TELEMETRY_POSTGRES_DB}
+      TELEMETRY_POSTGRES_USER: ${TELEMETRY_POSTGRES_USER}
+      TELEMETRY_POSTGRES_PASSWORD: ${TELEMETRY_POSTGRES_PASSWORD}
+      TELEMETRY_UDP_ENABLED: ${TELEMETRY_UDP_ENABLED}
+      TELEMETRY_UDP_HOST: ${TELEMETRY_UDP_HOST}
+      TELEMETRY_UDP_PORT_PS1: ${TELEMETRY_UDP_PORT_PS1:-20777}
+      TELEMETRY_UDP_PORT_PS2: ${TELEMETRY_UDP_PORT_PS2:-20778}
+      TELEMETRY_UDP_PORTS: ${TELEMETRY_UDP_PORTS:-20777,20778}
+      TELEMETRY_PERSIST_PACKET_IDS: ${TELEMETRY_PERSIST_PACKET_IDS}
     ports:
       - "${APP_PORT}:3000"
+      - "${TELEMETRY_UDP_PORT_PS1:-20777}:${TELEMETRY_UDP_PORT_PS1:-20777}/udp"
+      - "${TELEMETRY_UDP_PORT_PS2:-20778}:${TELEMETRY_UDP_PORT_PS2:-20778}/udp"
     depends_on:
       db:
+        condition: service_healthy
+      telemetry-db:
         condition: service_healthy
 
   db:
@@ -37,6 +52,27 @@ services:
       timeout: 5s
       retries: 10
 
+  telemetry-db:
+    image: postgres:15-alpine
+    container_name: f1-scoreboard-telemetry-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${TELEMETRY_POSTGRES_DB}
+      POSTGRES_USER: ${TELEMETRY_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${TELEMETRY_POSTGRES_PASSWORD}
+    volumes:
+      - f1_scoreboard_telemetry_db_data:/var/lib/postgresql/data
+      - ./db/telemetry-migrations:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "${TELEMETRY_DATABASE_PORT}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
 volumes:
   f1_scoreboard_db_data:
     name: f1_scoreboard_db_data
+  f1_scoreboard_telemetry_db_data:
+    name: f1_scoreboard_telemetry_db_data

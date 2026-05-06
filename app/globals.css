@@ -2033,6 +2033,86 @@ h2 {
   margin: 0;
 }
 
+.admin-telemetry-summary-card,
+.admin-telemetry-stack,
+.admin-telemetry-meta {
+  display: grid;
+  gap: 16px;
+}
+
+.admin-telemetry-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-telemetry-stats-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.admin-telemetry-meta p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.admin-telemetry-danger-card {
+  border-color: rgba(164, 178, 193, 0.18);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
+    rgba(7, 14, 24, 0.88);
+}
+
+.admin-telemetry-danger-card::before {
+  background: linear-gradient(90deg, #7f8b98, #d0d6dd);
+}
+
+.admin-telemetry-clear-button {
+  width: 100%;
+  min-height: 48px;
+  font-size: 0.82rem;
+  border-color: rgba(255, 140, 140, 0.42);
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.1) 0 10%, transparent 10% 100%),
+    linear-gradient(135deg, rgba(255, 120, 120, 0.92), rgba(164, 18, 18, 0.96));
+  color: #fff4f4;
+  box-shadow: 0 12px 24px rgba(120, 16, 16, 0.24);
+}
+
+.admin-telemetry-clear-button:hover {
+  border-color: rgba(255, 170, 170, 0.6);
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.12) 0 10%, transparent 10% 100%),
+    linear-gradient(135deg, rgba(255, 138, 138, 0.96), rgba(188, 20, 20, 0.98));
+  box-shadow: 0 14px 28px rgba(120, 16, 16, 0.3);
+}
+
+.admin-telemetry-status-active {
+  color: var(--ok);
+}
+
+.admin-telemetry-status-disabled {
+  color: var(--error);
+}
+
+.admin-telemetry-table code {
+  display: inline-block;
+  max-width: 520px;
+  color: #d7dee7;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-family: "IBM Plex Mono", "Consolas", monospace;
+  font-size: 0.8rem;
+}
+
+.admin-telemetry-packet-name {
+  display: grid;
+  gap: 4px;
+}
+
+.admin-telemetry-json-cell {
+  min-width: 320px;
+}
+
 .admin-track-stack,
 .admin-track-summary {
   display: grid;
@@ -2273,6 +2353,14 @@ h2 {
   }
 
   .admin-utility-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-telemetry-summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-telemetry-stats-grid {
     grid-template-columns: 1fr;
   }
 

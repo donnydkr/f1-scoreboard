@@ -5,6 +5,7 @@ A simple web app for tracking and comparing sim racing lap times on a public sco
 ## Features
 - **Public Scoreboard:** Overview of the fastest times per circuit.
 - **Admin Panel:** Secured area (`/admin`) for managing drivers and lap times.
+- **Telemetry Test Lane:** Separate UDP telemetry intake and storage for PS5 testing without touching the live lap-time database.
 - **Automatic Migrations:** Database schemas are updated automatically through Docker.
 - **Responsive Design:** Works on both desktop and mobile while you are on track.
 
@@ -12,6 +13,7 @@ A simple web app for tracking and comparing sim racing lap times on a public sco
 - `app/`: Next.js App Router pages and API routes
 - `components/`: React components
 - `db/`: Database logic, queries, and SQL migrations
+- `db/telemetry-migrations/`: Separate schema for the telemetry test database
 - `lib/`: Utilities for auth, database connections, and formatting
 - `public/circuits/`: Assets such as circuit outlines and flags
 - `docs/`: In-depth documentation about the architecture
@@ -38,6 +40,37 @@ docker compose up -d --build
 
 - public scoreboard: `http://localhost:3000`
 - admin login: `http://localhost:3000/admin/login`
+- telemetry monitor: `http://localhost:3000/admin/telemetry`
+
+## PS5 Telemetry Test Flow
+
+1. Set `TELEMETRY_UDP_ENABLED=true` in `.env`.
+2. Start or rebuild with `docker compose up -d --build`.
+3. Open `/admin/telemetry` and verify the listener is active.
+4. In the F1 game on PS5, point UDP telemetry to the IP address of the machine running this app and to the configured UDP port.
+   - PlayStation 01: `20777`
+   - PlayStation 02: `20778`
+5. Drive a few laps and watch the separate telemetry page fill with packet logs and extracted lap times.
+
+The telemetry listener stores data in a different Postgres database from the existing scoreboard database. The current implementation is intended as a safe test lane: it logs the most useful packet types and separately stores detected lap completions for the player car.
+
+## Local Telemetry Testing Without a PlayStation
+
+You can simulate telemetry locally with:
+
+```bash
+npm run telemetry:test
+```
+
+By default this sends packets for 2 virtual consoles to `127.0.0.1:20777` and `127.0.0.1:20778`. You can override this:
+
+```bash
+node scripts/send-telemetry-test.mjs --host 127.0.0.1 --ports 20777,20778 --consoles 2 --laps 4
+```
+
+This is useful to test the telemetry admin page and to validate that the app can distinguish two simultaneous telemetry sources.
+
+If your telemetry database volume already existed before these telemetry schema changes, the new migration files will not be replayed automatically by Postgres. In that case, recreate only the telemetry volume or apply the SQL changes manually before using the updated telemetry overview.
 
 ## First Run on Another PC or VPS
 
