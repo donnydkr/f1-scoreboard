@@ -1,20 +1,20 @@
 :root {
-  --bg: #041221;
-  --bg-panel: rgba(4, 28, 52, 0.86);
-  --bg-panel-soft: rgba(10, 54, 93, 0.34);
-  --line: rgba(123, 177, 212, 0.22);
-  --line-strong: rgba(123, 177, 212, 0.42);
-  --text: #f2fbff;
-  --muted: #b5d3df;
-  --accent: #006edf;
-  --accent-rgb: 0, 110, 223;
-  --accent-2: #a2c62c;
-  --accent-2-rgb: 162, 198, 44;
-  --panel-glow: 0 0 0 1px rgba(255, 255, 255, 0.03), 0 18px 40px rgba(0, 0, 0, 0.22);
-  --ok: #7fd36d;
-  --error: #ff8c8c;
+  --bg: #06111f;
+  --bg-panel: rgba(5, 19, 38, 0.9);
+  --bg-panel-soft: rgba(10, 35, 61, 0.52);
+  --line: rgba(80, 220, 232, 0.24);
+  --line-strong: rgba(80, 220, 232, 0.46);
+  --text: #f5fbff;
+  --muted: #a9c7d3;
+  --accent: #12dce6;
+  --accent-rgb: 18, 220, 230;
+  --accent-2: #f2d24d;
+  --accent-2-rgb: 242, 210, 77;
+  --panel-glow: 0 0 0 1px rgba(80, 220, 232, 0.05), 0 18px 40px rgba(0, 0, 0, 0.28);
+  --ok: #2fe071;
+  --error: #ff4d6d;
   --shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
-  --radius: 22px;
+  --radius: 10px;
   --font-display: "Rajdhani", "Barlow Condensed", "Segoe UI", sans-serif;
   --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
 }
@@ -34,9 +34,9 @@ body {
   color: var(--text);
   font-family: var(--font-body);
   background:
-    radial-gradient(circle at top left, rgba(0, 137, 247, 0.24), transparent 28%),
-    radial-gradient(circle at top right, rgba(var(--accent-2-rgb), 0.18), transparent 24%),
-    linear-gradient(135deg, #02111f, #002f68 48%, #041221 100%);
+    radial-gradient(circle at top left, rgba(var(--accent-rgb), 0.18), transparent 28%),
+    radial-gradient(circle at top right, rgba(var(--accent-2-rgb), 0.14), transparent 24%),
+    linear-gradient(135deg, #020914, #071c35 48%, #06111f 100%);
 }
 
 body::before {
@@ -78,19 +78,19 @@ textarea {
   margin-bottom: 24px;
   padding: 28px;
   border: 1px solid var(--line);
-  border-radius: calc(var(--radius) + 6px);
+  border-radius: calc(var(--radius) + 2px);
   background:
-    linear-gradient(120deg, rgba(255, 255, 255, 0.06) 0 14%, transparent 14% 100%),
-    linear-gradient(135deg, rgba(var(--accent-rgb), 0.2), rgba(16, 169, 171, 0.1)),
-    rgba(3, 24, 45, 0.88);
+    linear-gradient(120deg, rgba(255, 255, 255, 0.045) 0 14%, transparent 14% 100%),
+    linear-gradient(135deg, rgba(var(--accent-rgb), 0.16), rgba(var(--accent-2-rgb), 0.07)),
+    rgba(4, 18, 37, 0.9);
   box-shadow: var(--shadow);
 }
 
 .admin-hero {
-  border-color: rgba(164, 178, 193, 0.18);
+  border-color: rgba(var(--accent-rgb), 0.18);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
-    rgba(7, 14, 24, 0.88);
+    rgba(5, 17, 33, 0.9);
   box-shadow:
     0 18px 34px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.02);
@@ -106,7 +106,7 @@ textarea {
 }
 
 .admin-hero::after {
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  background: linear-gradient(90deg, transparent, rgba(var(--accent-2-rgb), 0.14), transparent);
   opacity: 0.45;
 }
 
@@ -235,7 +235,7 @@ h2 {
   justify-content: center;
   min-height: 44px;
   padding: 0 18px;
-  border-radius: 999px;
+  border-radius: 8px;
   border: 1px solid transparent;
   cursor: pointer;
   text-transform: uppercase;
@@ -246,8 +246,8 @@ h2 {
 .primary-button {
   background:
     linear-gradient(120deg, rgba(255, 255, 255, 0.18) 0 12%, transparent 12% 100%),
-    linear-gradient(135deg, #0089f7, var(--accent));
-  color: #f2fbff;
+    linear-gradient(135deg, #10d9e5, #008ca3);
+  color: #02111f;
   font-weight: 700;
   box-shadow: 0 14px 28px rgba(var(--accent-rgb), 0.28);
 }
@@ -256,7 +256,7 @@ h2 {
   border-color: rgba(255, 255, 255, 0.2);
   background:
     linear-gradient(120deg, rgba(255, 255, 255, 0.12) 0 10%, transparent 10% 100%),
-    rgba(255, 255, 255, 0.06);
+    rgba(7, 27, 50, 0.72);
   backdrop-filter: blur(4px);
   color: var(--text);
   font-weight: 600;
@@ -282,8 +282,8 @@ h2 {
   min-height: 38px;
   padding: 0 14px;
   border-color: rgba(255, 140, 140, 0.28);
-  background: rgba(255, 140, 140, 0.08);
-  color: #ffd0d0;
+  background: rgba(255, 77, 109, 0.1);
+  color: #ffd4dc;
   font-size: 0.88rem;
   font-weight: 700;
 }
@@ -332,7 +332,7 @@ h2 {
   left: 20px;
   width: 96px;
   height: 3px;
-  border-radius: 999px;
+  border-radius: 2px;
   background: linear-gradient(90deg, var(--accent), var(--accent-2));
 }
 
@@ -420,7 +420,7 @@ h2 {
   height: 52px;
   background: var(--bg-panel-soft);
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 8px;
 }
 
 .rain-indicator {
@@ -516,7 +516,7 @@ h2 {
   margin-bottom: 20px;
   padding: 18px;
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: 10px;
   background:
     linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 12%, transparent 12% 100%),
     linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
@@ -553,7 +553,7 @@ h2 {
   min-height: 138px;
   padding: 12px;
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: 8px;
   background:
     linear-gradient(125deg, rgba(255, 255, 255, 0.08) 0 10%, transparent 10% 100%),
     rgba(255, 255, 255, 0.04);
@@ -637,7 +637,7 @@ h2 {
   overflow: hidden;
   padding: 18px;
   border: 1px solid var(--line);
-  border-radius: 18px;
+  border-radius: 8px;
   background:
     linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 14%, transparent 14% 100%),
     var(--bg-panel-soft);
@@ -763,7 +763,7 @@ h2 {
   place-items: center;
   width: 26px;
   height: 26px;
-  border-radius: 999px;
+  border-radius: 6px;
   background: rgba(255, 255, 255, 0.08);
   color: var(--accent-2);
   font-family: var(--font-display);
@@ -926,7 +926,7 @@ h2 {
   min-height: 48px;
   padding: 0 18px;
   border: 1px solid rgba(var(--accent-2-rgb), 0.5);
-  border-radius: 999px;
+  border-radius: 8px;
   background:
     linear-gradient(120deg, rgba(255, 255, 255, 0.18) 0 11%, transparent 11% 100%),
     linear-gradient(135deg, rgba(var(--accent-2-rgb), 0.95), rgba(var(--accent-rgb), 0.88));
@@ -955,7 +955,7 @@ h2 {
 .driver-builder-input {
   width: 100%;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 8px;
   background:
     linear-gradient(125deg, rgba(255, 255, 255, 0.06) 0 12%, transparent 12% 100%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.025)),
@@ -991,7 +991,7 @@ h2 {
   width: 100%;
   min-height: 48px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 8px;
   background:
     linear-gradient(125deg, rgba(255, 255, 255, 0.06) 0 12%, transparent 12% 100%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.025)),
@@ -1027,7 +1027,7 @@ h2 {
   height: 52px;
   padding: 0;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 8px;
   background:
     linear-gradient(125deg, rgba(255, 255, 255, 0.06) 0 12%, transparent 12% 100%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.025)),
@@ -1128,7 +1128,7 @@ h2 {
   width: 100%;
   min-height: 48px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 8px;
   background:
     linear-gradient(125deg, rgba(255, 255, 255, 0.06) 0 12%, transparent 12% 100%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.025)),
@@ -1204,7 +1204,7 @@ h2 {
   padding: 6px;
   overflow-y: auto;
   border: 1px solid rgba(var(--accent-2-rgb), 0.28);
-  border-radius: 14px;
+  border-radius: 8px;
   background: rgba(6, 35, 64, 0.98);
   box-shadow: 0 18px 34px rgba(0, 0, 0, 0.36);
 }
@@ -1220,14 +1220,14 @@ h2 {
   grid-template-columns: minmax(0, 1fr) 42px;
   align-items: center;
   gap: 4px;
-  border-radius: 10px;
+  border-radius: 6px;
 }
 
 .driver-option-button,
 .driver-option-delete {
   min-height: 42px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 6px;
   background: transparent;
   color: var(--text);
   cursor: pointer;
@@ -1322,7 +1322,7 @@ h2 {
   width: 100%;
   min-height: 48px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 8px;
   background:
     linear-gradient(125deg, rgba(255, 255, 255, 0.06) 0 12%, transparent 12% 100%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.025)),
@@ -1398,7 +1398,7 @@ h2 {
   padding: 6px;
   overflow-y: auto;
   border: 1px solid rgba(var(--accent-2-rgb), 0.28);
-  border-radius: 14px;
+  border-radius: 8px;
   background: rgba(6, 35, 64, 0.98);
   box-shadow: 0 18px 34px rgba(0, 0, 0, 0.36);
 }
@@ -1411,7 +1411,7 @@ h2 {
   min-height: 42px;
   padding: 0 10px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 6px;
   background: transparent;
   color: var(--text);
   cursor: pointer;
@@ -1464,7 +1464,7 @@ h2 {
   width: 100%;
   min-height: 48px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 8px;
   background:
     linear-gradient(125deg, rgba(255, 255, 255, 0.06) 0 12%, transparent 12% 100%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.025)),
@@ -1540,7 +1540,7 @@ h2 {
   padding: 6px;
   overflow: visible;
   border: 1px solid rgba(var(--accent-2-rgb), 0.28);
-  border-radius: 14px;
+  border-radius: 8px;
   background: rgba(6, 35, 64, 0.98);
   box-shadow: 0 18px 34px rgba(0, 0, 0, 0.36);
 }
@@ -1553,7 +1553,7 @@ h2 {
   min-height: 42px;
   padding: 0 10px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 6px;
   background: transparent;
   color: var(--text);
   cursor: pointer;
@@ -1603,7 +1603,7 @@ h2 {
   width: 100%;
   min-height: 48px;
   border: 1px solid var(--line);
-  border-radius: 14px;
+  border-radius: 8px;
   background:
     linear-gradient(125deg, rgba(255, 255, 255, 0.06) 0 12%, transparent 12% 100%),
     linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.025)),
@@ -1679,7 +1679,7 @@ h2 {
   padding: 6px;
   overflow-y: auto;
   border: 1px solid rgba(var(--accent-2-rgb), 0.28);
-  border-radius: 14px;
+  border-radius: 8px;
   background: rgba(6, 35, 64, 0.98);
   box-shadow: 0 18px 34px rgba(0, 0, 0, 0.36);
 }
@@ -1692,7 +1692,7 @@ h2 {
   min-height: 42px;
   padding: 0 10px;
   border: 1px solid transparent;
-  border-radius: 10px;
+  border-radius: 6px;
   background: transparent;
   color: var(--text);
   cursor: pointer;
@@ -1770,7 +1770,7 @@ h2 {
   width: min(480px, 100%);
   padding: 28px;
   border: 1px solid var(--line);
-  border-radius: 24px;
+  border-radius: 10px;
   background: var(--bg-panel);
   box-shadow: var(--shadow);
 }
@@ -1793,10 +1793,10 @@ h2 {
 .admin-stat-card,
 .admin-panel,
 .admin-record-card {
-  border-color: rgba(164, 178, 193, 0.18);
+  border-color: rgba(var(--accent-rgb), 0.16);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
-    rgba(7, 14, 24, 0.88);
+    rgba(5, 17, 33, 0.88);
   box-shadow:
     0 18px 34px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.02);
@@ -1806,7 +1806,7 @@ h2 {
 .admin-panel::before {
   left: 18px;
   width: 72px;
-  background: linear-gradient(90deg, #7f8b98, #d0d6dd);
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
   opacity: 0.9;
 }
 
@@ -1814,18 +1814,18 @@ h2 {
 .admin-panel-header .subtle,
 .admin-record-id,
 .admin-record-label {
-  color: #96a3b2;
+  color: var(--muted);
 }
 
 .admin-stat-card .stat-value,
 .admin-panel h2,
 .admin-record-value {
-  color: #f4f7fb;
+  color: var(--text);
   text-shadow: none;
 }
 
 .admin-panel {
-  border-radius: 20px;
+  border-radius: 10px;
 }
 
 .admin-panel-header {
@@ -1859,16 +1859,16 @@ h2 {
 }
 
 .admin-database-actions .ghost-button {
-  border-color: rgba(208, 214, 221, 0.18);
+  border-color: rgba(var(--accent-rgb), 0.18);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015)),
-    rgba(255, 255, 255, 0.02);
-  color: #e8edf4;
+    rgba(8, 29, 52, 0.62);
+  color: var(--text);
 }
 
 .admin-database-count {
   margin: 0;
-  color: #96a3b2;
+  color: var(--muted);
   font-size: 0.92rem;
 }
 
@@ -1876,11 +1876,11 @@ h2 {
   display: grid;
   gap: 14px;
   padding: 18px;
-  border: 1px solid rgba(164, 178, 193, 0.16);
-  border-radius: 20px;
+  border: 1px solid rgba(var(--accent-rgb), 0.16);
+  border-radius: 10px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
-    rgba(10, 18, 30, 0.78);
+    rgba(6, 20, 38, 0.82);
 }
 
 .admin-utility-grid {
@@ -1908,7 +1908,7 @@ h2 {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #d7dee7;
+  color: var(--text);
 }
 
 .admin-import-toggle input {
@@ -1932,11 +1932,11 @@ h2 {
   display: grid;
   gap: 14px;
   padding: 18px;
-  border: 1px solid rgba(164, 178, 193, 0.16);
-  border-radius: 20px;
+  border: 1px solid rgba(var(--accent-rgb), 0.16);
+  border-radius: 10px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
-    rgba(10, 18, 30, 0.78);
+    rgba(6, 20, 38, 0.82);
 }
 
 .admin-notes-body {
@@ -1946,11 +1946,11 @@ h2 {
 
 .admin-record-table-wrap {
   overflow-x: auto;
-  border: 1px solid rgba(164, 178, 193, 0.18);
-  border-radius: 20px;
+  border: 1px solid rgba(var(--accent-rgb), 0.16);
+  border-radius: 10px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
-    rgba(7, 14, 24, 0.88);
+    rgba(5, 17, 33, 0.88);
   box-shadow:
     0 18px 34px rgba(0, 0, 0, 0.28),
     inset 0 1px 0 rgba(255, 255, 255, 0.02);
@@ -1965,7 +1965,7 @@ h2 {
 .admin-record-table th,
 .admin-record-table td {
   padding: 14px 16px;
-  border-bottom: 1px solid rgba(164, 178, 193, 0.12);
+  border-bottom: 1px solid rgba(var(--accent-rgb), 0.12);
   text-align: left;
   vertical-align: middle;
 }
@@ -1974,8 +1974,8 @@ h2 {
   position: sticky;
   top: 0;
   z-index: 1;
-  background: rgba(10, 18, 30, 0.96);
-  color: #96a3b2;
+  background: rgba(5, 17, 33, 0.96);
+  color: var(--muted);
   font-size: 0.76rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -1995,14 +1995,14 @@ h2 {
 }
 
 .admin-record-id-cell {
-  color: #96a3b2;
+  color: var(--muted);
   white-space: nowrap;
 }
 
 .admin-record-lap {
   display: inline-flex;
   font-size: 1rem;
-  color: #f4f7fb;
+  color: var(--text);
   white-space: nowrap;
 }
 
@@ -2038,7 +2038,7 @@ h2 {
   gap: 12px;
   padding: 16px;
   border: 1px solid rgba(var(--accent-2-rgb), 0.2);
-  border-radius: 16px;
+  border-radius: 8px;
   background:
     linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 12%, transparent 12% 100%),
     rgba(10, 18, 30, 0.82);
@@ -2054,7 +2054,7 @@ h2 {
   gap: 10px;
   align-self: flex-end;
   min-height: 44px;
-  color: #d7dee7;
+  color: var(--text);
   font-weight: 700;
 }
 
@@ -2075,7 +2075,7 @@ h2 {
   justify-content: space-between;
   gap: 16px;
   padding: 2px 4px 0;
-  color: #7f8b98;
+  color: var(--muted);
   font-size: 0.82rem;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -2108,14 +2108,14 @@ h2 {
 }
 
 .admin-telemetry-danger-card {
-  border-color: rgba(164, 178, 193, 0.18);
+  border-color: rgba(var(--accent-rgb), 0.16);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0)),
-    rgba(7, 14, 24, 0.88);
+    rgba(5, 17, 33, 0.88);
 }
 
 .admin-telemetry-danger-card::before {
-  background: linear-gradient(90deg, #7f8b98, #d0d6dd);
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
 }
 
 .admin-telemetry-clear-button {
@@ -2211,7 +2211,7 @@ h2 {
   overflow: hidden;
   padding: 14px 16px;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: 8px;
   background:
     linear-gradient(125deg, rgba(255, 255, 255, 0.05) 0 11%, transparent 11% 100%),
     var(--bg-panel-soft);
@@ -2250,7 +2250,7 @@ h2 {
   width: min(460px, 100%);
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 24px;
+  border-radius: 10px;
   background:
     radial-gradient(circle at top, rgba(255, 255, 255, 0.14), transparent 30%),
     linear-gradient(145deg, rgba(0, 110, 223, 0.95), rgba(4, 31, 58, 0.98));
@@ -2279,7 +2279,7 @@ h2 {
   gap: 4px;
   padding: 10px 12px;
   border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 16px;
+  border-radius: 8px;
   background: rgba(2, 18, 33, 0.34);
 }
 
@@ -2325,7 +2325,7 @@ h2 {
   height: 32px;
   border: 4px solid transparent;
   border-top-color: #ffd166;
-  border-radius: 999px;
+  border-radius: 8px;
   opacity: 0.9;
 }
 
@@ -2350,7 +2350,7 @@ h2 {
 .celebration-confetti-piece {
   position: absolute;
   top: -24px;
-  border-radius: 999px;
+  border-radius: 3px;
   transform: rotate(var(--piece-rotation));
   animation-name: celebration-fall;
   animation-timing-function: linear;
