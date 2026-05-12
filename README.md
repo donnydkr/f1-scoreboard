@@ -1,4 +1,4 @@
-# f1-scoreboard (yes, this is AI slop)
+# f1-scoreboard (yes this is ai slop, but it's cool)
 
 A simple web app for tracking and comparing sim racing lap times on a public scoreboard.
 
