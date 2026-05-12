@@ -536,6 +536,11 @@ h2 {
   gap: 10px;
 }
 
+.track-filter-panel .track-chip-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(144px, 1fr));
+}
+
 .track-chip {
   position: relative;
   overflow: hidden;
@@ -621,6 +626,10 @@ h2 {
   overflow-wrap: anywhere;
   word-break: break-word;
   text-wrap: balance;
+}
+
+.track-filter-panel .track-chip {
+  width: 100%;
 }
 
 .stat-card {
@@ -1527,9 +1536,9 @@ h2 {
   display: grid;
   gap: 4px;
   width: 100%;
-  max-height: 260px;
+  max-height: none;
   padding: 6px;
-  overflow-y: auto;
+  overflow: visible;
   border: 1px solid rgba(var(--accent-2-rgb), 0.28);
   border-radius: 14px;
   background: rgba(6, 35, 64, 0.98);
@@ -2018,6 +2027,49 @@ h2 {
   font-size: 0.78rem;
 }
 
+.admin-record-edit-row td {
+  padding: 0 16px 16px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.admin-record-edit-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(var(--accent-2-rgb), 0.2);
+  border-radius: 16px;
+  background:
+    linear-gradient(120deg, rgba(255, 255, 255, 0.05) 0 12%, transparent 12% 100%),
+    rgba(10, 18, 30, 0.82);
+}
+
+.admin-record-edit-field {
+  gap: 6px;
+}
+
+.admin-record-edit-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  align-self: flex-end;
+  min-height: 44px;
+  color: #d7dee7;
+  font-weight: 700;
+}
+
+.admin-record-edit-toggle input {
+  width: 16px;
+  height: 16px;
+}
+
+.admin-record-edit-actions {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .admin-page-footer {
   display: flex;
   justify-content: space-between;
@@ -2120,9 +2172,9 @@ h2 {
 }
 
 .admin-track-stack {
-  --admin-track-rail-width: 452px;
+  --admin-track-rail-width: 100%;
   align-content: start;
-  justify-items: start;
+  justify-items: stretch;
 }
 
 .admin-track-summary {
@@ -2138,6 +2190,15 @@ h2 {
 .admin-track-stack .track-chip-list,
 .admin-track-history {
   width: min(100%, var(--admin-track-rail-width));
+}
+
+.admin-track-stack .track-chip-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+}
+
+.admin-track-stack .track-chip {
+  width: 100%;
 }
 
 .admin-track-history {

@@ -19,6 +19,7 @@ const initialState = {
 };
 
 const setupOptions = [
+  "Custom",
   "Maximum Downforce",
   "Increased Downforce",
   "Balanced",

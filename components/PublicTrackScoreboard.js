@@ -25,12 +25,6 @@ function sortByBestLap(entries) {
   });
 }
 
-function sortByRecent(entries) {
-  return [...entries].sort((left, right) => {
-    return new Date(right.created_at).getTime() - new Date(left.created_at).getTime();
-  });
-}
-
 function getBestLapByTrack(entries) {
   const bestByTrack = new Map();
 
@@ -276,7 +270,6 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
   }, [entries, selectedTrack]);
 
   const topLapTimes = useMemo(() => sortByBestLap(filteredEntries).slice(0, 10), [filteredEntries]);
-  const recentLapTimes = useMemo(() => sortByRecent(filteredEntries).slice(0, 8), [filteredEntries]);
   const visibleTracks = useMemo(
     () => tracks.filter((track) => track !== ALL_TRACKS),
     [tracks]
@@ -350,24 +343,12 @@ export function PublicTrackScoreboard({ entries, initialSelectedTrack = null }) 
         </div>
       </section>
 
-      <div className="dashboard-grid">
-        <ScoreboardTable
-          entries={topLapTimes}
-          title={selectedTrack === ALL_TRACKS ? publicText.scoreboard.topLapsTitle : `Top 10 - ${selectedTrack}`}
-          emptyMessage={publicText.scoreboard.emptyTopLaps}
-          showSetupIcon
-        />
-        <ScoreboardTable
-          entries={recentLapTimes}
-          title={
-            selectedTrack === ALL_TRACKS
-              ? publicText.scoreboard.latestEntriesTitle
-              : `${publicText.scoreboard.latestEntriesTitle} - ${selectedTrack}`
-          }
-          emptyMessage={publicText.scoreboard.emptyLatestEntries}
-          showSeatOrSetupColumn={false}
-        />
-      </div>
+      <ScoreboardTable
+        entries={topLapTimes}
+        title={selectedTrack === ALL_TRACKS ? publicText.scoreboard.topLapsTitle : `Top 10 - ${selectedTrack}`}
+        emptyMessage={publicText.scoreboard.emptyTopLaps}
+        showSetupIcon
+      />
 
       <CircuitRecordCelebration
         open={Boolean(celebrationRecord)}

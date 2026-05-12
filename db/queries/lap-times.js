@@ -248,6 +248,81 @@ export async function deleteLapTimeById(id) {
   return result.rows[0] || null;
 }
 
+export async function updateLapTimeById(id, input) {
+  const pool = getPool();
+  const client = await pool.connect();
+
+  try {
+    await client.query("begin");
+
+    const result = await client.query(
+      `
+        update lap_times
+        set driver_name = $2,
+            track_name = $3,
+            car_name = $4,
+            lap_time_ms = $5,
+            lap_time_display = $6,
+            setup = $7,
+            is_wet = $8,
+            session_date = $9,
+            notes = $10,
+            seat = $11
+        where id = $1
+        returning
+          id,
+          driver_name,
+          track_name,
+          car_name,
+          lap_time_ms,
+          lap_time_display,
+          setup,
+          is_wet,
+          seat,
+          session_date,
+          notes,
+          created_at
+      `,
+      [
+        id,
+        input.driverName,
+        input.trackName,
+        input.carName,
+        input.lapTimeMs,
+        input.lapTimeDisplay,
+        input.setup,
+        input.isWet,
+        input.sessionDate,
+        input.notes,
+        input.seat
+      ]
+    );
+
+    if (!result.rows[0]) {
+      await client.query("commit");
+      return null;
+    }
+
+    await client.query(
+      `
+        insert into drivers (name)
+        values ($1)
+        on conflict (name) do nothing
+      `,
+      [input.driverName]
+    );
+
+    await client.query("commit");
+
+    return result.rows[0];
+  } catch (error) {
+    await client.query("rollback");
+    throw error;
+  } finally {
+    client.release();
+  }
+}
+
 export async function importLapTimes(rows, { replaceExisting = false } = {}) {
   const pool = getPool();
   const client = await pool.connect();

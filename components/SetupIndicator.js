@@ -42,6 +42,16 @@ export function SetupIndicator({ setup, size = "default" }) {
             <path d="m17 9 3 3-3 3" />
           </svg>
         );
+      case "Custom":
+        return (
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M4 12h7" />
+            <path d="M13 12h7" />
+            <circle cx="12" cy="12" r="2.5" />
+            <path d="M7 7h10" opacity="0.45" />
+            <path d="M7 17h10" opacity="0.45" />
+          </svg>
+        );
       default:
         return null;
     }
