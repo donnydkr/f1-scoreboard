@@ -27,14 +27,11 @@ const setupOptions = [
   "Maximum Top Speed"
 ];
 
-function TrashIcon() {
+function PencilIcon() {
   return (
     <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-      <path d="M3 6h18" />
-      <path d="M8 6V4h8v2" />
-      <path d="M19 6l-1 14H6L5 6" />
-      <path d="M10 11v5" />
-      <path d="M14 11v5" />
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" />
     </svg>
   );
 }
@@ -87,7 +84,7 @@ export function LapTimeForm({ initialDrivers = [] }) {
   const [isCircuitMenuOpen, setIsCircuitMenuOpen] = useState(false);
   const [isSetupMenuOpen, setIsSetupMenuOpen] = useState(false);
   const [isSeatMenuOpen, setIsSeatMenuOpen] = useState(false);
-  const [deletingDriverId, setDeletingDriverId] = useState(null);
+  const [renamingDriverId, setRenamingDriverId] = useState(null);
   const [isCreatingDriver, setIsCreatingDriver] = useState(false);
   const [newDriverName, setNewDriverName] = useState("");
   const [feedback, setFeedback] = useState("");
@@ -279,45 +276,62 @@ export function LapTimeForm({ initialDrivers = [] }) {
     setFeedback(adminText.lapForm.addDriverSuccess.replace("{name}", createdDriver.name));
   }
 
-  async function handleDeleteDriver(driver) {
+  async function handleRenameDriver(driver) {
     if (!driver?.id) {
       return;
     }
 
-    const confirmed = window.confirm(
-      adminText.lapForm.confirmDeleteDriver.replace("{name}", driver.name)
-    );
+    const nextName = window.prompt(adminText.lapForm.renameDriverPrompt, driver.name)?.trim() || "";
 
-    if (!confirmed) {
+    if (!nextName) {
       return;
     }
 
-    const driverId = String(driver.id);
+    if (nextName === driver.name) {
+      setFeedback(adminText.api.driverRenameNoChange);
+      return;
+    }
 
     setError("");
     setFeedback("");
-    setDeletingDriverId(driverId);
+    setRenamingDriverId(String(driver.id));
 
-    const response = await fetch(`/api/drivers/${driver.id}`, {
-      method: "DELETE"
+    const response = await fetch("/api/drivers", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        currentName: driver.name,
+        newName: nextName
+      })
     });
 
     const payload = await readJsonSafely(response);
 
     if (!response.ok) {
-      setDeletingDriverId(null);
-      setError(payload?.error || adminText.lapForm.deleteDriverError);
+      setRenamingDriverId(null);
+      setError(payload?.error || adminText.lapForm.renameDriverError);
       return;
     }
 
-    setDrivers((current) => current.filter((currentDriver) => String(currentDriver.id) !== driverId));
+    const renamedDriver = payload?.data || { ...driver, name: nextName };
+    setDrivers((current) =>
+      sortDrivers(
+        current.map((currentDriver) =>
+          String(currentDriver.id) === String(driver.id)
+            ? { ...currentDriver, ...renamedDriver, name: renamedDriver.name || nextName }
+            : currentDriver
+        )
+      )
+    );
     setValues((current) => ({
       ...current,
-      driverName: current.driverName === driver.name ? "" : current.driverName
+      driverName: current.driverName === driver.name ? nextName : current.driverName
     }));
-    setDeletingDriverId(null);
+    setRenamingDriverId(null);
     setIsDriverMenuOpen(false);
-    setFeedback(adminText.lapForm.deleteDriverSuccess.replace("{name}", driver.name));
+    setFeedback(adminText.lapForm.renameDriverSuccess.replace("{name}", nextName));
 
     startTransition(() => {
       router.refresh();
@@ -412,7 +426,7 @@ export function LapTimeForm({ initialDrivers = [] }) {
                   drivers.map((driver) => {
                     const driverId = String(driver.id || driver.name);
                     const isSelected = driver.name === values.driverName;
-                    const deletingThisDriver = deletingDriverId === String(driver.id);
+                    const renamingThisDriver = renamingDriverId === String(driver.id);
 
                     return (
                       <div
@@ -425,7 +439,7 @@ export function LapTimeForm({ initialDrivers = [] }) {
                           type="button"
                           role="menuitemradio"
                           aria-checked={isSelected}
-                          disabled={Boolean(deletingDriverId)}
+                          disabled={Boolean(renamingDriverId)}
                           onClick={() => selectDriver(driver.name)}
                         >
                           <span className="driver-option-name">{driver.name}</span>
@@ -433,15 +447,15 @@ export function LapTimeForm({ initialDrivers = [] }) {
                         <button
                           className="driver-option-delete"
                           type="button"
-                          aria-label={adminText.lapForm.deleteDriverAria.replace("{name}", driver.name)}
-                          title={adminText.lapForm.deleteDriver}
-                          disabled={!driver.id || Boolean(deletingDriverId)}
+                          aria-label={adminText.lapForm.renameDriverAria.replace("{name}", driver.name)}
+                          title={adminText.lapForm.renameDriver}
+                          disabled={!driver.id || Boolean(renamingDriverId)}
                           onClick={(event) => {
                             event.stopPropagation();
-                            handleDeleteDriver(driver);
+                            handleRenameDriver(driver);
                           }}
                         >
-                          {deletingThisDriver ? <span className="driver-option-spinner" /> : <TrashIcon />}
+                          {renamingThisDriver ? <span className="driver-option-spinner" /> : <PencilIcon />}
                         </button>
                       </div>
                     );
