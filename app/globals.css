@@ -2131,6 +2131,16 @@ h2 {
   line-height: 1.5;
 }
 
+.admin-deploy-meta {
+  display: grid;
+  gap: 8px;
+}
+
+.admin-deploy-meta p {
+  margin: 0;
+  line-height: 1.5;
+}
+
 .admin-telemetry-danger-card {
   border-color: rgba(var(--accent-rgb), 0.16);
   background:
@@ -2168,6 +2178,14 @@ h2 {
 
 .admin-telemetry-status-disabled {
   color: var(--error);
+}
+
+.admin-deploy-status-ok {
+  color: var(--ok);
+}
+
+.admin-deploy-status-update {
+  color: #ffd166;
 }
 
 .admin-telemetry-table code {

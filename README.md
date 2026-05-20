@@ -102,6 +102,22 @@ For production or a VPS:
 - only expose the ports you actually need
 - preferably use a reverse proxy with HTTPS for public traffic
 
+## Update Status In Admin
+
+The admin dashboard can show whether the current deploy appears behind GitHub.
+
+How it works:
+
+- the Docker build writes local git metadata into the image
+- the admin page compares that build commit with the latest commit on GitHub for the configured branch
+
+Optional environment variables:
+
+- `GITHUB_REPO_BRANCH`
+- `GITHUB_API_TOKEN`
+
+For public repositories, the token is usually not required. For private repositories, configure `GITHUB_API_TOKEN`.
+
 ## Admin and Public Separation
 
 The public scoreboard page only shows lap times and may be accessed with /scoreboard

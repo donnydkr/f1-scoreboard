@@ -13,6 +13,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+RUN node scripts/write-build-metadata.mjs
 RUN npm run build
 
 FROM node:22-alpine AS runner
@@ -30,6 +31,7 @@ COPY --from=builder /app/components ./components
 COPY --from=builder /app/lib ./lib
 COPY --from=builder /app/db ./db
 COPY --from=builder /app/scripts ./scripts
+COPY --from=builder /app/generated ./generated
 COPY --from=builder /app/middleware.js ./middleware.js
 COPY --from=builder /app/next.config.mjs ./next.config.mjs
 COPY --from=builder /app/jsconfig.json ./jsconfig.json

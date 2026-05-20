@@ -1,6 +1,5 @@
 .next
 node_modules
 .env
-.git
 README.md
 docs
