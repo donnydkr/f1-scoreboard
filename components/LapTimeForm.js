@@ -36,14 +36,14 @@ function PencilIcon() {
   );
 }
 
-function SeatWheelIcon() {
+function SeatIcon() {
   return (
     <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-      <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
-      <path d="M8.5 12h7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M12 8.5v7" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M9.5 9.5l1.8 2.5L9.5 15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M14.5 9.5l-1.8 2.5L14.5 15" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M8 4h8a2 2 0 0 1 2 2v2H6V6a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" strokeWidth="2" />
+      <path d="M6 8h12v6H6z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M8 14v6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M16 14v6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <path d="M10 14v3h4v-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -81,9 +81,10 @@ export function LapTimeForm({ initialDrivers = [] }) {
   const [values, setValues] = useState(initialState);
   const [drivers, setDrivers] = useState(() => sortDrivers(initialDrivers));
   const [isDriverMenuOpen, setIsDriverMenuOpen] = useState(false);
+  const [driverSearch, setDriverSearch] = useState("");
   const [isCircuitMenuOpen, setIsCircuitMenuOpen] = useState(false);
+  const [circuitSearch, setCircuitSearch] = useState("");
   const [isSetupMenuOpen, setIsSetupMenuOpen] = useState(false);
-  const [isSeatMenuOpen, setIsSeatMenuOpen] = useState(false);
   const [renamingDriverId, setRenamingDriverId] = useState(null);
   const [isCreatingDriver, setIsCreatingDriver] = useState(false);
   const [newDriverName, setNewDriverName] = useState("");
@@ -91,9 +92,10 @@ export function LapTimeForm({ initialDrivers = [] }) {
   const [error, setError] = useState("");
   const [celebrationRecord, setCelebrationRecord] = useState(null);
   const driverMenuRef = useRef(null);
+  const driverSearchRef = useRef(null);
   const circuitMenuRef = useRef(null);
+  const circuitSearchRef = useRef(null);
   const setupMenuRef = useRef(null);
-  const seatMenuRef = useRef(null);
   const celebrationTimerRef = useRef(null);
   const [isPending, startTransition] = useTransition();
   const parsedLapTimeMs = parseLapTimeToMs(values.lapTime);
@@ -115,10 +117,6 @@ export function LapTimeForm({ initialDrivers = [] }) {
       if (setupMenuRef.current && !setupMenuRef.current.contains(event.target)) {
         setIsSetupMenuOpen(false);
       }
-
-      if (seatMenuRef.current && !seatMenuRef.current.contains(event.target)) {
-        setIsSeatMenuOpen(false);
-      }
     }
 
     function handleKeyDown(event) {
@@ -126,7 +124,6 @@ export function LapTimeForm({ initialDrivers = [] }) {
         setIsDriverMenuOpen(false);
         setIsCircuitMenuOpen(false);
         setIsSetupMenuOpen(false);
-        setIsSeatMenuOpen(false);
       }
     }
 
@@ -138,6 +135,28 @@ export function LapTimeForm({ initialDrivers = [] }) {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, []);
+
+  useEffect(() => {
+    if (isDriverMenuOpen) {
+      window.requestAnimationFrame(() => {
+        driverSearchRef.current?.focus();
+      });
+      return;
+    }
+
+    setDriverSearch("");
+  }, [isDriverMenuOpen]);
+
+  useEffect(() => {
+    if (isCircuitMenuOpen) {
+      window.requestAnimationFrame(() => {
+        circuitSearchRef.current?.focus();
+      });
+      return;
+    }
+
+    setCircuitSearch("");
+  }, [isCircuitMenuOpen]);
 
   useEffect(() => {
     if (!celebrationRecord) {
@@ -180,6 +199,12 @@ export function LapTimeForm({ initialDrivers = [] }) {
   }
 
   const seatOptions = ["Stoel 1", "Stoel 2"];
+  const filteredDrivers = drivers.filter((driver) =>
+    driver.name.toLowerCase().includes(driverSearch.trim().toLowerCase())
+  );
+  const filteredCircuits = circuitNames.filter((track) =>
+    track.toLowerCase().includes(circuitSearch.trim().toLowerCase())
+  );
 
   function updateValue(event) {
     const { name, value, type, checked } = event.target;
@@ -195,6 +220,7 @@ export function LapTimeForm({ initialDrivers = [] }) {
       driverName
     }));
     setIsDriverMenuOpen(false);
+    setDriverSearch("");
     setFeedback("");
     setError("");
   }
@@ -205,6 +231,7 @@ export function LapTimeForm({ initialDrivers = [] }) {
       trackName
     }));
     setIsCircuitMenuOpen(false);
+    setCircuitSearch("");
     setFeedback("");
     setError("");
   }
@@ -224,7 +251,6 @@ export function LapTimeForm({ initialDrivers = [] }) {
       ...current,
       seat
     }));
-    setIsSeatMenuOpen(false);
     setFeedback("");
     setError("");
   }
@@ -423,43 +449,64 @@ export function LapTimeForm({ initialDrivers = [] }) {
                 {drivers.length === 0 ? (
                   <div className="driver-select-empty">{adminText.lapForm.emptyDrivers}</div>
                 ) : (
-                  drivers.map((driver) => {
-                    const driverId = String(driver.id || driver.name);
-                    const isSelected = driver.name === values.driverName;
-                    const renamingThisDriver = renamingDriverId === String(driver.id);
+                  <>
+                    <label className="driver-select-search">
+                      <span className="sr-only">{adminText.lapForm.driverSearchLabel}</span>
+                      <input
+                        ref={driverSearchRef}
+                        className="driver-select-search-input"
+                        type="search"
+                        value={driverSearch}
+                        onChange={(event) => setDriverSearch(event.target.value)}
+                        placeholder={adminText.lapForm.driverSearchPlaceholder}
+                        autoComplete="off"
+                      />
+                    </label>
 
-                    return (
-                      <div
-                        key={driverId}
-                        className={`driver-option-row${isSelected ? " is-selected" : ""}`}
-                        role="none"
-                      >
-                        <button
-                          className="driver-option-button"
-                          type="button"
-                          role="menuitemradio"
-                          aria-checked={isSelected}
-                          disabled={Boolean(renamingDriverId)}
-                          onClick={() => selectDriver(driver.name)}
-                        >
-                          <span className="driver-option-name">{driver.name}</span>
-                        </button>
-                        <button
-                          className="driver-option-delete"
-                          type="button"
-                          aria-label={adminText.lapForm.renameDriverAria.replace("{name}", driver.name)}
-                          title={adminText.lapForm.renameDriver}
-                          disabled={!driver.id || Boolean(renamingDriverId)}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            handleRenameDriver(driver);
-                          }}
-                        >
-                          {renamingThisDriver ? <span className="driver-option-spinner" /> : <PencilIcon />}
-                        </button>
-                      </div>
-                    );
-                  })
+                    <div className="driver-select-results" role="group" aria-label={adminText.lapForm.driverLabel}>
+                      {filteredDrivers.length === 0 ? (
+                        <div className="driver-select-empty">{adminText.lapForm.driverSearchEmpty}</div>
+                      ) : (
+                        filteredDrivers.map((driver) => {
+                          const driverId = String(driver.id || driver.name);
+                          const isSelected = driver.name === values.driverName;
+                          const renamingThisDriver = renamingDriverId === String(driver.id);
+
+                          return (
+                            <div
+                              key={driverId}
+                              className={`driver-option-row${isSelected ? " is-selected" : ""}`}
+                              role="none"
+                            >
+                              <button
+                                className="driver-option-button"
+                                type="button"
+                                role="menuitemradio"
+                                aria-checked={isSelected}
+                                disabled={Boolean(renamingDriverId)}
+                                onClick={() => selectDriver(driver.name)}
+                              >
+                                <span className="driver-option-name">{driver.name}</span>
+                              </button>
+                              <button
+                                className="driver-option-delete"
+                                type="button"
+                                aria-label={adminText.lapForm.renameDriverAria.replace("{name}", driver.name)}
+                                title={adminText.lapForm.renameDriver}
+                                disabled={!driver.id || Boolean(renamingDriverId)}
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  handleRenameDriver(driver);
+                                }}
+                              >
+                                {renamingThisDriver ? <span className="driver-option-spinner" /> : <PencilIcon />}
+                              </button>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  </>
                 )}
               </div>
             ) : null}
@@ -489,31 +536,50 @@ export function LapTimeForm({ initialDrivers = [] }) {
 
               {isCircuitMenuOpen ? (
                 <div className="circuit-select-menu" role="menu" aria-labelledby="circuit-select-label">
-                  {circuitNames.map((track) => {
-                    const flagSrc = getCircuitFlagAsset(track);
-                    const isSelected = track === values.trackName;
+                  <label className="circuit-select-search">
+                    <span className="sr-only">{adminText.lapForm.circuitSearchLabel}</span>
+                    <input
+                      ref={circuitSearchRef}
+                      className="circuit-select-search-input"
+                      type="search"
+                      value={circuitSearch}
+                      onChange={(event) => setCircuitSearch(event.target.value)}
+                      placeholder={adminText.lapForm.circuitSearchPlaceholder}
+                      autoComplete="off"
+                    />
+                  </label>
 
-                    return (
-                      <button
-                        key={track}
-                        className={`circuit-option-button${isSelected ? " is-selected" : ""}`}
-                        type="button"
-                        role="menuitemradio"
-                        aria-checked={isSelected}
-                        onClick={() => selectCircuit(track)}
-                      >
-                        {flagSrc ? (
-                          <img
-                            className="circuit-option-flag"
-                            src={flagSrc}
-                            alt=""
-                            aria-hidden="true"
-                          />
-                        ) : null}
-                        <span className="circuit-option-name">{track}</span>
-                      </button>
-                    );
-                  })}
+                  <div className="circuit-select-results" role="group" aria-label={adminText.lapForm.circuitLabel}>
+                    {filteredCircuits.length === 0 ? (
+                      <div className="circuit-select-empty">{adminText.lapForm.circuitSearchEmpty}</div>
+                    ) : (
+                      filteredCircuits.map((track) => {
+                        const flagSrc = getCircuitFlagAsset(track);
+                        const isSelected = track === values.trackName;
+
+                        return (
+                          <button
+                            key={track}
+                            className={`circuit-option-button${isSelected ? " is-selected" : ""}`}
+                            type="button"
+                            role="menuitemradio"
+                            aria-checked={isSelected}
+                            onClick={() => selectCircuit(track)}
+                          >
+                            {flagSrc ? (
+                              <img
+                                className="circuit-option-flag"
+                                src={flagSrc}
+                                alt=""
+                                aria-hidden="true"
+                              />
+                            ) : null}
+                            <span className="circuit-option-name">{track}</span>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
                 </div>
               ) : null}
             </div>
@@ -575,63 +641,6 @@ export function LapTimeForm({ initialDrivers = [] }) {
           </div>
         </div>
 
-        <div className="field seat-select-field">
-          <span id="seat-select-label">{adminText.lapForm.seatLabel}</span>
-          <div className="setup-field-group">
-            <div className={`seat-select${isSeatMenuOpen ? " is-open" : ""}`} ref={seatMenuRef}>
-              <button
-                className="seat-select-trigger"
-                type="button"
-                aria-haspopup="menu"
-                aria-expanded={isSeatMenuOpen}
-                aria-labelledby="seat-select-label"
-                onClick={() => setIsSeatMenuOpen((current) => !current)}
-              >
-                <span className={values.seat ? "seat-select-value" : "seat-select-placeholder"}>
-                  {values.seat || "Kies een stoel"}
-                </span>
-                <span className="seat-select-chevron" aria-hidden="true" />
-              </button>
-
-              {isSeatMenuOpen ? (
-                <div className="seat-select-menu" role="menu" aria-labelledby="seat-select-label">
-                  {seatOptions.map((seat) => {
-                    const isSelected = seat === values.seat;
-
-                    return (
-                      <button
-                        key={seat}
-                        className={`seat-option-button${isSelected ? " is-selected" : ""}`}
-                        type="button"
-                        role="menuitemradio"
-                        aria-checked={isSelected}
-                        onClick={() => selectSeat(seat)}
-                      >
-                        <SeatWheelIcon />
-                        <span className="seat-option-name">{seat}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              ) : null}
-            </div>
-          </div>
-        </div>
-
-        <label className="field">
-          <span>{adminText.lapForm.lapTimeLabel}</span>
-          <input
-            name="lapTime"
-            value={values.lapTime}
-            onChange={updateValue}
-            inputMode="numeric"
-            autoComplete="off"
-            placeholder={adminText.lapForm.lapTimePlaceholder}
-            required
-          />
-          {lapTimeRangeError ? <span className="field-error">{lapTimeRangeError}</span> : null}
-        </label>
-
         <label className="field">
           <span id="setup-select-label">{adminText.lapForm.setupLabel}</span>
           <div className="setup-field-group">
@@ -674,6 +683,42 @@ export function LapTimeForm({ initialDrivers = [] }) {
             </div>
           </div>
         </label>
+
+        <label className="field">
+          <span>{adminText.lapForm.lapTimeLabel}</span>
+          <input
+            name="lapTime"
+            value={values.lapTime}
+            onChange={updateValue}
+            inputMode="numeric"
+            autoComplete="off"
+            placeholder={adminText.lapForm.lapTimePlaceholder}
+            required
+          />
+          {lapTimeRangeError ? <span className="field-error">{lapTimeRangeError}</span> : null}
+        </label>
+
+        <div className="field seat-select-field">
+          <span id="seat-select-label">{adminText.lapForm.seatLabel}</span>
+          <div className="setup-field-group seat-toggle-group" role="group" aria-labelledby="seat-select-label">
+            {seatOptions.map((seat) => {
+              const isSelected = seat === values.seat;
+
+              return (
+                <button
+                  key={seat}
+                  className={`rain-toggle-button seat-toggle-button${isSelected ? " is-active" : ""}`}
+                  type="button"
+                  aria-pressed={isSelected}
+                  onClick={() => selectSeat(seat)}
+                >
+                  <SeatIcon />
+                  <span className="seat-toggle-text">{seat}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
 
       </div>
       {error ? <p className="form-error">{error}</p> : null}
