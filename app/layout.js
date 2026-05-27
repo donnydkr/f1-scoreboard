@@ -1,4 +1,5 @@
 import "./globals.css";
+import { adminText } from "@/lib/admin-text";
 
 export const metadata = {
   title: "F1 Scoreboard",
@@ -8,7 +9,12 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="nl">
-      <body>{children}</body>
+      <body>
+        <div className="app-frame">{children}</div>
+        <footer className="site-footer">
+          <p>{adminText.adminPage.footerCopyright}</p>
+        </footer>
+      </body>
     </html>
   );
 }

@@ -1,4 +1,5 @@
 import { AutoRefresh } from "@/components/AutoRefresh";
+import { PublicNewsBanner } from "@/components/PublicNewsBanner";
 import { PublicTrackScoreboard } from "@/components/PublicTrackScoreboard";
 import { getAppSetting } from "@/db/queries/app-settings";
 import { getAllLapTimes } from "@/db/queries/lap-times";
@@ -21,10 +22,13 @@ export default async function PublicPage() {
   }
 
   return (
-    <main className="site-shell">
-      <AutoRefresh intervalMs={SCOREBOARD_REFRESH_MS} />
+    <>
+      <PublicNewsBanner entries={lapTimes} />
+      <main className="site-shell">
+        <AutoRefresh intervalMs={SCOREBOARD_REFRESH_MS} />
 
-      <PublicTrackScoreboard entries={lapTimes} initialSelectedTrack={activeCircuit} />
-    </main>
+        <PublicTrackScoreboard entries={lapTimes} initialSelectedTrack={activeCircuit} />
+      </main>
+    </>
   );
 }

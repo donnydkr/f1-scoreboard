@@ -1,6 +1,7 @@
 import { AdminShell } from "@/components/AdminShell";
 import { AdminTrackRecentList } from "@/components/AdminTrackRecentList";
 import { LapTimeForm } from "@/components/LapTimeForm";
+import { PublicNewsBanner } from "@/components/PublicNewsBanner";
 import { adminText } from "@/lib/admin-text";
 import { getDrivers } from "@/db/queries/drivers";
 import { getAllLapTimes } from "@/db/queries/lap-times";
@@ -22,35 +23,38 @@ export default async function InvoerschermPage() {
   }
 
   return (
-    <AdminShell
-      eyebrow={adminText.inputShell.eyebrow}
-      title={adminText.inputShell.title}
-      intro={adminText.inputShell.intro}
-      showAdminLink
-      showLogout={false}
-    >
-      <div className="admin-grid">
-        <section className="panel">
-          <div className="panel-header">
-            <h2>{adminText.page.newLapTitle}</h2>
-            {adminText.page.newLapIntro ? (
-              <p className="subtle">{adminText.page.newLapIntro}</p>
-            ) : null}
-          </div>
-          <div className="panel-body">
-            <LapTimeForm initialDrivers={drivers} />
-          </div>
-        </section>
+    <>
+      <PublicNewsBanner entries={recentLapTimes} />
+      <AdminShell
+        eyebrow={adminText.inputShell.eyebrow}
+        title={adminText.inputShell.title}
+        intro={adminText.inputShell.intro}
+        showAdminLink
+        showLogout={false}
+      >
+        <div className="admin-grid">
+          <section className="panel">
+            <div className="panel-header">
+              <h2>{adminText.page.newLapTitle}</h2>
+              {adminText.page.newLapIntro ? (
+                <p className="subtle">{adminText.page.newLapIntro}</p>
+              ) : null}
+            </div>
+            <div className="panel-body">
+              <LapTimeForm initialDrivers={drivers} />
+            </div>
+          </section>
 
-        <section className="panel">
-          <div className="panel-header">
-            <h2>{adminText.page.recentTimesTitle}</h2>
-          </div>
-          <div className="panel-body mini-list">
-            <AdminTrackRecentList entries={recentLapTimes} />
-          </div>
-        </section>
-      </div>
-    </AdminShell>
+          <section className="panel">
+            <div className="panel-header">
+              <h2>{adminText.page.recentTimesTitle}</h2>
+            </div>
+            <div className="panel-body mini-list">
+              <AdminTrackRecentList entries={recentLapTimes} />
+            </div>
+          </section>
+        </div>
+      </AdminShell>
+    </>
   );
 }

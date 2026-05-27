@@ -1,6 +1,5 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import packageJson from "../../package.json";
 import { AdminShell } from "@/components/AdminShell";
 import { getDeploymentStatus } from "@/lib/deployment-status";
 import { getAllLapTimes } from "@/db/queries/lap-times";
@@ -219,11 +218,6 @@ export default async function AdminPage() {
             </div>
           </div>
         </section>
-
-        <footer className="admin-page-footer">
-          <p>{adminText.adminPage.footerCopyright}</p>
-          <p>{adminText.adminPage.footerVersion.replace("{version}", packageJson.version)}</p>
-        </footer>
       </div>
     </AdminShell>
   );

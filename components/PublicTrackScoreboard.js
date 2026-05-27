@@ -66,6 +66,7 @@ function TrackStatsBlock({ trackName, entries, selectedTrack = null }) {
   const topLapTimes = sortByBestLap(filteredEntries).slice(0, 10);
   const bestLap = topLapTimes[0];
   const podiumLapTimes = topLapTimes.slice(0, 5);
+  const bestLapTimeMs = bestLap?.lap_time_ms ?? null;
   const selectedTrackImage = getCircuitAsset(trackName);
   const selectedTrackFlag = getCircuitFlagAsset(trackName);
 
@@ -87,7 +88,7 @@ function TrackStatsBlock({ trackName, entries, selectedTrack = null }) {
               {selectedTrackFlag ? (
                 <img className="stat-circuit-flag" src={selectedTrackFlag} alt="" aria-hidden="true" />
               ) : null}
-              <p className="stat-value stat-value-small">{trackName}</p>
+              <p className="stat-value stat-value-small stat-circuit-name">{trackName}</p>
             </div>
           </div>
         </article>
@@ -132,11 +133,19 @@ function TrackStatsBlock({ trackName, entries, selectedTrack = null }) {
           ) : (
             <div className="podium-list">
               {podiumLapTimes.map((entry, index) => (
-                <div key={entry.id} className="podium-item">
+                <div key={entry.id} className={`podium-item${index === 0 ? " podium-item-best" : ""}`}>
                   <span className="podium-rank">{index + 1}</span>
                   <span className="podium-lap">
                     <span className="lap-value-content">
-                      <span>{formatLapTime(entry.lap_time_ms)}</span>
+                      <span className="podium-lap-time">{formatLapTime(entry.lap_time_ms)}</span>
+                      {index > 0 && Number.isFinite(bestLapTimeMs) ? (
+                        <span
+                          className="podium-lap-delta"
+                          title={`+${formatLapTime(entry.lap_time_ms - bestLapTimeMs)}`}
+                        >
+                          +{formatLapTime(entry.lap_time_ms - bestLapTimeMs)}
+                        </span>
+                      ) : null}
                       <RainIndicator isWet={entry.is_wet} size="large" />
                     </span>
                   </span>
