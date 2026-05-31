@@ -148,13 +148,6 @@ export function LapTimeForm({ initialDrivers = [] }) {
   }, [isDriverMenuOpen]);
 
   useEffect(() => {
-    if (isCircuitMenuOpen) {
-      window.requestAnimationFrame(() => {
-        circuitSearchRef.current?.focus();
-      });
-      return;
-    }
-
     setCircuitSearch("");
   }, [isCircuitMenuOpen]);
 
