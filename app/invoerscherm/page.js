@@ -1,4 +1,5 @@
 import { AdminShell } from "@/components/AdminShell";
+import { AdminUpcomingRaceCard } from "@/components/AdminUpcomingRaceCard";
 import { AdminTrackRecentList } from "@/components/AdminTrackRecentList";
 import { LapTimeForm } from "@/components/LapTimeForm";
 import { PublicNewsBanner } from "@/components/PublicNewsBanner";
@@ -33,17 +34,21 @@ export default async function InvoerschermPage() {
         showLogout={false}
       >
         <div className="admin-grid">
-          <section className="panel">
-            <div className="panel-header">
-              <h2>{adminText.page.newLapTitle}</h2>
-              {adminText.page.newLapIntro ? (
-                <p className="subtle">{adminText.page.newLapIntro}</p>
-              ) : null}
-            </div>
-            <div className="panel-body">
-              <LapTimeForm initialDrivers={drivers} />
-            </div>
-          </section>
+          <div className="admin-page-stack">
+            <section className="panel">
+              <div className="panel-header">
+                <h2>{adminText.page.newLapTitle}</h2>
+                {adminText.page.newLapIntro ? (
+                  <p className="subtle">{adminText.page.newLapIntro}</p>
+                ) : null}
+              </div>
+              <div className="panel-body">
+                <LapTimeForm initialDrivers={drivers} />
+              </div>
+            </section>
+
+            <AdminUpcomingRaceCard />
+          </div>
 
           <section className="panel">
             <div className="panel-header">
