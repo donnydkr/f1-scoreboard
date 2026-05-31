@@ -1848,9 +1848,9 @@ h2 {
   display: grid;
   gap: 4px;
   width: 100%;
-  max-height: none;
+  max-height: 240px;
   padding: 6px;
-  overflow: visible;
+  overflow-y: auto;
   border: 1px solid rgba(var(--accent-rgb), 0.32);
   border-radius: 8px;
   background:
@@ -1867,8 +1867,8 @@ h2 {
   grid-template-columns: 26px minmax(0, 1fr);
   align-items: center;
   gap: 10px;
-  min-height: 42px;
-  padding: 0 10px;
+  min-height: 38px;
+  padding: 0 8px;
   border: 1px solid transparent;
   border-radius: 6px;
   background: transparent;
@@ -1903,8 +1903,8 @@ h2 {
 }
 
 .setup-option-button .setup-indicator {
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.15rem;
+  height: 1.15rem;
   color: inherit;
 }
 
@@ -2033,6 +2033,10 @@ h2 {
   border-radius: 10px;
 }
 
+.admin-input-panel {
+  overflow: visible;
+}
+
 .admin-panel-header {
   padding-bottom: 8px;
 }
@@ -2044,6 +2048,10 @@ h2 {
 
 .admin-panel-body {
   padding-top: 8px;
+}
+
+.admin-input-panel .panel-body {
+  padding-bottom: 28px;
 }
 
 .admin-race-panel .panel-body {

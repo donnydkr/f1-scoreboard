@@ -35,7 +35,7 @@ export default async function InvoerschermPage() {
       >
         <div className="admin-grid">
           <div className="admin-page-stack">
-            <section className="panel">
+            <section className="panel admin-input-panel">
               <div className="panel-header">
                 <h2>{adminText.page.newLapTitle}</h2>
                 {adminText.page.newLapIntro ? (
