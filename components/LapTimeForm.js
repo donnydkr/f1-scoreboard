@@ -36,18 +36,6 @@ function PencilIcon() {
   );
 }
 
-function SeatIcon() {
-  return (
-    <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24">
-      <path d="M8 4h8a2 2 0 0 1 2 2v2H6V6a2 2 0 0 1 2-2Z" fill="none" stroke="currentColor" strokeWidth="2" />
-      <path d="M6 8h12v6H6z" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" />
-      <path d="M8 14v6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M16 14v6" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-      <path d="M10 14v3h4v-3" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 function formatLapTimeInput(rawValue) {
   const digits = String(rawValue || "").replace(/\D/g, "").slice(0, 8);
 
@@ -589,10 +577,10 @@ export function LapTimeForm({ initialDrivers = [] }) {
           </div>
         </div>
 
-        <div className="field">
-          <span>Vul een naam in</span>
-          <div className="driver-builder-highlight">
-            {isCreatingDriver ? (
+        {isCreatingDriver ? (
+          <div className="field driver-builder-field">
+            <span>Vul een naam in</span>
+            <div className="driver-builder-highlight">
               <div className="driver-builder-row driver-builder-row-stacked">
                 <input
                   className="driver-builder-input"
@@ -618,21 +606,9 @@ export function LapTimeForm({ initialDrivers = [] }) {
                   </button>
                 </div>
               </div>
-            ) : (
-              <button
-                className="driver-builder-button"
-                type="button"
-                onClick={() => {
-                  setIsCreatingDriver(true);
-                  setFeedback("");
-                  setError("");
-                }}
-              >
-                {adminText.lapForm.createDriver}
-              </button>
-            )}
+            </div>
           </div>
-        </div>
+        ) : null}
 
         <label className="field">
           <span id="setup-select-label">{adminText.lapForm.setupLabel}</span>
@@ -705,7 +681,7 @@ export function LapTimeForm({ initialDrivers = [] }) {
                   aria-pressed={isSelected}
                   onClick={() => selectSeat(seat)}
                 >
-                  <SeatIcon />
+                  <img className="seat-toggle-image" src="/afbeeldingen/stoel.png" alt="" aria-hidden="true" />
                   <span className="seat-toggle-text">{seat}</span>
                 </button>
               );
@@ -720,6 +696,18 @@ export function LapTimeForm({ initialDrivers = [] }) {
       <div className="form-actions">
         <button className="primary-button" type="submit" disabled={isPending}>
           {isPending ? adminText.lapForm.submitting : adminText.lapForm.submit}
+        </button>
+        <button
+          className="ghost-button"
+          type="button"
+          onClick={() => {
+            setIsCreatingDriver(true);
+            setFeedback("");
+            setError("");
+          }}
+          disabled={isCreatingDriver}
+        >
+          {adminText.lapForm.createDriver}
         </button>
       </div>
 

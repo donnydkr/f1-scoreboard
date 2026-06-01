@@ -1909,32 +1909,42 @@ h2 {
 }
 
 .seat-toggle-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
 }
 
 .seat-toggle-button {
-  min-width: 102px;
-  padding: 0 14px;
-  gap: 8px;
+  min-width: 0;
+  width: 100%;
+  min-height: 118px;
+  padding: 16px 10px 14px;
+  gap: 6px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
 }
 
-.seat-toggle-button svg {
-  width: 18px;
-  height: 18px;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  filter: drop-shadow(0 0 8px rgba(var(--accent-2-rgb), 0.18));
+.seat-toggle-image {
+  width: 52px;
+  height: 52px;
+  object-fit: contain;
+  display: block;
+  filter:
+    brightness(0)
+    invert(1)
+    drop-shadow(0 0 8px rgba(var(--accent-2-rgb), 0.18));
 }
 
 .seat-toggle-text {
   font-weight: 700;
   letter-spacing: 0.04em;
+  line-height: 1.1;
+  text-align: center;
 }
 
 @keyframes driver-option-spin {
